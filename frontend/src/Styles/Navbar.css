@@ -1,0 +1,31 @@
+.container-fluid {
+  --bs-gutter-x: 0 !important; 
+}
+.navbar-nav .nav-link{
+    color: #000000;
+  }
+  .dropend .dropdown-toggle{
+    margin-left: 0em;
+  }
+  .dropdown-item:hover{
+    color: #fff;
+  }
+  .dropdown .dropdown-menu{
+    display: none;
+  }
+   .dropend:hover > .dropdown-menu{
+    display: block;
+    margin-top: -0.5em;
+    margin-left: 0em;
+  }
+  @media screen and (min-width:769px) {
+    .dropend:hover > .dropdown-menu{
+      position: absolute;
+      top: 0;
+      left: 100%;
+    }
+    .dropend .dropdown-toggle{
+      margin-left: 0;
+      
+    }
+  }
