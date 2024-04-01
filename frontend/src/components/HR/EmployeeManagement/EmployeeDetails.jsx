@@ -13,7 +13,7 @@ const EmployeeDetails = ({ empDetails }) => {
           gap: "20px",
         }}
       >
-        <h2 className="mb-4">Full Detail</h2>
+        <h5 className="mb-4">Full Detail</h5>
         <img
           src={empDetails.image}
           alt="Employee"
@@ -27,6 +27,7 @@ const EmployeeDetails = ({ empDetails }) => {
         <p className="mb-2">{empDetails.job}</p>
         <p className="mb-0 font-weight-bold">{empDetails.dateofjoining}</p>
       </div>
+      
     </nav>
   );
 };

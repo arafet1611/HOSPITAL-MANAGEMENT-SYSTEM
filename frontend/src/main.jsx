@@ -6,6 +6,9 @@ import store from "./redux/store";
 import "./index.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>

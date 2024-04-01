@@ -1,0 +1,37 @@
+.custom-calendar {
+  height: 250px;
+  max-width: 22rem; /* Adjust the height as needed */
+}
+.calendar-month {
+  max-width: 22rem;
+}
+@media (max-width: 768px) {
+  .custom-calendar {
+    height: auto; /* Auto height for smaller screens */
+    max-width: 100%; /* Full width for smaller screens */
+  }
+
+  .calendar-month {
+    text-align: center; /* Center the month header */
+  }
+}
+.vacation-day {
+  background-color: green !important; 
+  color: white !important; 
+}
+.slick-prev:before, .slick-next:before {
+color:#9FA6B2 !important;
+font-size: 25px !important;
+}
+.grid-container {
+  display: grid;
+  
+  grid-template-columns: repeat(8, 0fr);
+  grid-gap: 1px;
+ justify-content: center;
+  
+ align-items: center;
+}
+.table>:not(caption)>*>* {
+  padding: 1rem 1rem;
+}
