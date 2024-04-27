@@ -2,10 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const rowSlice = createSlice({
   name: "rows",
-  initialState: [],
-  reducers: {
+  initialState: {
+    rowsData: [] 
+  },  reducers: {
     addRows: (state, action) => {
-      return action.payload;
+      state.rowsData = action.payload;
     }
   }
 });

@@ -2,10 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const columnSlice = createSlice({
   name: "columns",
-  initialState: [],
+  initialState: {
+    columnsData: [] // Initialize columnsData as an empty array
+  },
   reducers: {
     addColumns: (state, action) => {
-      return action.payload;
+      state.columnsData = action.payload; // Update columnsData with the payload
     }
   }
 });

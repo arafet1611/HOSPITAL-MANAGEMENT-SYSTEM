@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "semantic-ui-css/semantic.min.css";
 import { AgGridReact } from "ag-grid-react";
 import { useDispatch, useSelector } from "react-redux"; // Importing hooks from react-redux
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate , useLocation  } from "react-router-dom"; // Import useNavigate
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -11,7 +11,9 @@ import { addRows } from "../../../redux/guardboard/rowSlice"; // Importing actio
 import CustomCellEditor from "../column-creation/CustomCellEditor";
 
 const TableEntry = (props) => {
-  const { serviceName } = props.location.state;
+  const location = useLocation();
+
+  const serviceName = location.state?.serviceName;
   const [nextMonth, setNextMonth] = useState("");
   const [nextMonthYear, setNextMonthYear] = useState("");
   const [daysInNextMonth, setDaysInNextMonth] = useState("");
@@ -19,7 +21,8 @@ const TableEntry = (props) => {
   const [dataOfEachDayOfNextMonth, setDataOfEachDayOfNextMonth] = useState([]);
   const [dateValues, setDateValues] = useState([]);
   const dispatch = useDispatch(); // Creating dispatch function
-  const columnsData = useSelector(state => state.columns.columnsData); // Accessing columnsData from Redux store
+  const columnsData = useSelector(state => state.columns.columnsData);
+  console.log("collumns data " ,columnsData) // Accessing columnsData from Redux store
 const navigate =useNavigate()
   useEffect(() => {
     const today = new Date();

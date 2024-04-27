@@ -11,7 +11,6 @@ const TableView = () => {
 
   const columnsData = useSelector(state => state.columns.columnsData);
   const rowsData = useSelector(state => state.rows.rowsData);
-
   useEffect(() => {
     setTableRows(rowsData);
   }, [rowsData]);
@@ -32,17 +31,26 @@ const TableView = () => {
     editable: false,
   }));
 
-  const rowGetter = (i) => {
-    return tableRows[i];
+  const onGridRowsUpdated = ({ fromRow, toRow, updated }) => {
+    tableRows(gridState => {
+      const rows = gridState.slice();
+      for (let i = fromRow; i <= toRow; i++) {
+        rows[i] = { ...rows[i], ...updated };
+      }
+      return { rows };
+    });
   };
-
+  
+console.log(rowsData)
+console.log(rowsData.length)
   return (
     <div className="container">
-      {tableRows.length > 0 ? (
+      {rowsData.length > 0 ? (
         <ReactDataGrid
           columns={gridColumns}
-          rowGetter={rowGetter}
-          rowsCount={tableRows.length}
+          rowGetter={i => rowsData[i]}
+          rowsCount={rowsData.length}
+          onGridRowsUpdated={onGridRowsUpdated}
           enableCellSelect={true}
           minHeight={800}
         />

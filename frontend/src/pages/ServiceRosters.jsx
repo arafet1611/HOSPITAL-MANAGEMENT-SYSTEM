@@ -1,8 +1,12 @@
+import ServerSelector from '../components/HR/serviceRoster/ServerSelector'
 import ServiceRoster from '../components/HR/serviceRoster/ServiceRoster'
 
 function ServiceRosters() {
   return (
-    <div><ServiceRoster /></div>
+    <div className="container py-5">
+      <ServerSelector />
+      <ServiceRoster />
+      </div>
   )
 }
 

@@ -1,151 +1,110 @@
 import { useState, useEffect } from "react";
 import Pagination from "../../Pagination";
-
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setNavbarSticky } from "../../../redux/navbar/NavbarSlice";
+import AddVacationPopupModel from "./addVacationPopupModel";
 function VacationList() {
- const vacationData = [
-    
-    {
-      vacation: "Jour de l'An",
-      from: "2024-01-01",
-      to: "2024-01-01",
-      days: 1,
-    },
-    {
-      vacation: "Fête de l'Indépendance",
-      from: "2024-03-20",
-      to: "2024-03-20",
-      days: 1,
-    },
-    {
-      vacation: "Fête des Martyrs",
-      from: "2024-04-09",
-      to: "2024-04-09",
-      days: 1,
-    },
-    {
-      vacation: "Fête Aïd al-Fitr",
-      from: "2024-04-10",
-      to: "2024-04-12",
-      days: 3,
-    },
-    {
-      vacation: "Fête du Aïd al-Adha",
-      from: "2024-06-16",
-      to: "2024-06-17",
-      days: 2,
-    },
-    {
-      vacation: "Ras El Am El Hijri",
-      from: "2024-07-07",
-      to: "2024-07-07",
-      days: 1,
-    },
-    {
-      vacation: "Journée de la République",
-      from: "2024-07-25",
-      to: "2024-07-25",
-      days: 1,
-    },
-    {
-      vacation: "Fête de la Femme",
-      from: "2024-08-13",
-      to: "2024-08-13",
-      days: 1,
-    },
-    {
-      vacation: "Mouled",
-      from: "2024-09-15",
-      to: "2024-09-15",
-      days: 1,
-    },
-    {
-      vacation: "Fête de l'Évacuation",
-      from: "2024-10-15",
-      to: "2024-10-15",
-      days: 1,
-    },
-    {
-      vacation: "Fête de la Révolution",
-      from: "2024-12-17",
-      to: "2024-12-17",
-      days: 1,
-    },
-  ];
+  const [vacationData, setVacationData] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredVacations, setFilteredVacations] = useState([]);
   const [rowsToShow, setRowsToShow] = useState(5);
   const [sortBy, setSortBy] = useState(null);
- 
-  useEffect(() => {
-     let filtered = vacationData;
- 
-     if (searchQuery) {
-       filtered = filtered.filter(request =>
-         request.vacation.toLowerCase().includes(searchQuery.toLowerCase())
-       );
-     }
- 
-    
-     if (sortBy) {
-       sortVacations(filtered, sortBy);
-     } else {
-       setFilteredVacations(filtered);
-     }
-  }, [vacationData, searchQuery, sortBy]);
- 
+  const dispatch = useDispatch();
 
- 
+  useEffect(() => {
+    const fetchVacations = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/vacations");
+        console.log("vacations list", response.data);
+        setVacationData(response.data);
+      } catch (error) {
+        console.error("Error fetching vacations:", error);
+      }
+    };
+    fetchVacations();
+  }, []);
+
+  useEffect(() => {
+    let filtered = vacationData || [];
+
+    if (searchQuery) {
+      filtered = filtered.filter((request) =>
+        request.vacation.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (sortBy) {
+      sortVacations(filtered, sortBy);
+    } else {
+      setFilteredVacations(filtered);
+    }
+  }, [vacationData, searchQuery, sortBy]);
+
   const sortVacations = (vacations, sortType) => {
-     let sortedVacations = [...vacations];
-     if (sortType === "start") {
-       sortedVacations.sort((a, b) => new Date(a.from) - new Date(b.from));
-     } else if (sortType === "end") {
-       sortedVacations.sort((a, b) => new Date(b.to) - new Date(a.to));
-     } else if (sortType === "duration") {
-       sortedVacations.sort((a, b) => b.days - a.days);
-     }
-     setFilteredVacations(sortedVacations);
+    let sortedVacations = [...vacations];
+    if (sortType === "start") {
+      sortedVacations.sort((a, b) => new Date(a.from) - new Date(b.from));
+    } else if (sortType === "end") {
+      sortedVacations.sort((a, b) => new Date(b.to) - new Date(a.to));
+    } else if (sortType === "duration") {
+      sortedVacations.sort((a, b) => b.days - a.days);
+    }
+    setFilteredVacations(sortedVacations);
   };
- 
-  const handleSortClick = (sortType , event) => {
+
+  const handleSortClick = (sortType, event) => {
     event.preventDefault();
-     setSortBy(sortType);
-     sortVacations(filteredVacations, sortType);
+    setSortBy(sortType);
+    sortVacations(filteredVacations, sortType);
   };
- 
+
   const handleRowsChange = (event) => {
-     setRowsToShow(parseInt(event.target.value, 10));
+    setRowsToShow(parseInt(event.target.value, 10));
   };
- 
+
   const handleSearchChange = (event) => {
-     setSearchQuery(event.target.value);
+    setSearchQuery(event.target.value);
   };
- 
+
   const itemsPerPage = rowsToShow;
   const [currentPage, setCurrentPage] = useState(1);
- 
+
   const indexOfLastRequest = currentPage * itemsPerPage;
   const indexOfFirstRequest = indexOfLastRequest - itemsPerPage;
   const currentRequests = filteredVacations.slice(
-     indexOfFirstRequest,
-     indexOfLastRequest
+    indexOfFirstRequest,
+    indexOfLastRequest
   );
- 
+
   const totalPages = Math.ceil(filteredVacations.length / itemsPerPage);
- 
+
   const handlePageChange = (pageNumber) => {
-     setCurrentPage(pageNumber);
+    setCurrentPage(pageNumber);
   };
- 
+
   useEffect(() => {
-     setCurrentPage(1);
-  }, [searchQuery, sortBy, ]);
- 
+    setCurrentPage(1);
+  }, [searchQuery, sortBy]);
+
   return (
-     <>
-       <style>{styles}</style>
-       <div className="row">
+    <>
+      <style>{styles}</style>
+      {showModal && <AddVacationPopupModel setShowModal={setShowModal} />}
+      <button
+        className="btn btn-primary"
+        onClick={() => {
+          setShowModal(true);
+          dispatch(setNavbarSticky(false));
+        }}
+      >
+        <i className="bi bi-plus-lg"></i>
+        Ajouter Jours Fériés
+      </button>
+
+      <div className="row">
         <div className="col-xl-12 col-sm-12 col-12">
           <div className="card">
             <div className="d-flex flex-row filter">
@@ -153,7 +112,7 @@ function VacationList() {
                 <a
                   className="link text-white py-2 px-2"
                   href="#"
-                  onClick={(event) => handleSortClick("start" , event)}
+                  onClick={(event) => handleSortClick("start", event)}
                 >
                   Trier par date de début{" "}
                   {sortBy === "start" && (
@@ -165,7 +124,7 @@ function VacationList() {
                 <a
                   className="link text-white py-2 px-2"
                   href="#"
-                  onClick={(event) => handleSortClick("end" , event)}
+                  onClick={(event) => handleSortClick("end", event)}
                 >
                   Trier par date de fin{" "}
                   {sortBy === "end" && (
@@ -239,7 +198,7 @@ function VacationList() {
               </div>
               <div className="col-md-3 mb-2">
                 <p>
-                  No de jours fériés <strong>{vacationData.length }</strong>
+                  No de jours fériés <strong>{vacationData.length}</strong>
                 </p>
               </div>
               <div className="table-responsive">
@@ -253,14 +212,21 @@ function VacationList() {
                     </tr>
                   </thead>
                   <tbody>
-                    {currentRequests.map((request, index) => (
-                      <tr key={index}>
-                        <td>{request.vacation}</td>
-                        <td>{request.from}</td>
-                        <td>{request.to}</td>
-                        <td>{request.days} Jour(s)</td>
+                    {Array.isArray(currentRequests) &&
+                    currentRequests.length > 0 ? (
+                      currentRequests.map((request, index) => (
+                        <tr key={index}>
+                          <td>{request.vacation}</td>
+                          <td>{request.startDate}</td>
+                          <td>{request.endDate}</td>
+                          <td>{request.numberOfDays} Jour(s)</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4">No vacations found</td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </div>
