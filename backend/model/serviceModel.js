@@ -1,25 +1,18 @@
 import mongoose from "mongoose";
 
 const serviceSchema = new mongoose.Schema({
-  employee: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Employee",
-      defaultValue: [],
-    },
-  ],
   title: {
     type: String,
-    require: true,
+    required: true,
   },
   content: {
     type: String,
-    require: true,
+    required: true,
   },
   category: {
     type: String,
-    require: true,
+    required: true,
   },
 });
-const Service = mongoose.model("service", serviceSchema);
+const Service = mongoose.model("Service", serviceSchema);
 export default Service;

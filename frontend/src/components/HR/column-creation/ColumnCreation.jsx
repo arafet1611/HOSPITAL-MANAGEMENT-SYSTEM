@@ -5,6 +5,7 @@ import axios from "axios";
 import SingleColumnCreation from "./SingleColumnCreation";
 import { addColumns } from "../../../redux/guardboard/columnSlice";
 import "./ColumnCreation.css";
+import { toast, Toaster } from "react-hot-toast";
 
 const ColumnCreation = () => {
   const defaultColumnsData = [
@@ -52,11 +53,27 @@ const ColumnCreation = () => {
     }
     return columnForm;
   };
-  const handleSubmitClick = () => {
+  const handleSubmitClick = async () => {
     console.log("Validation finale");
     console.log(columnsData);
-    setSubmitted(true);
-    dispatch(addColumns(columnsData));
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/guardboard", {
+        schemaName: selectedService + "_guardboard",
+        service : selectedService,
+        columns: columnsData,
+        NumberOfValueslist: columnsData.map((column) => column.NumberOfValues),
+      });
+      toast.success("Schema created successfully:", response.data);
+
+      console.log("Schema created successfully:", response.data);
+      setSubmitted(true);
+      dispatch(addColumns(columnsData));
+    } catch (error) {
+      toast.error("Error creating schema:", error);
+
+      console.error("Error creating schema:", error);
+    }
   };
   const handleAddColumnData = (columnData) => {
     setColumnsData((prevData) => {
@@ -67,6 +84,8 @@ const ColumnCreation = () => {
   };
   return (
     <div className="container-fluid ">
+            <Toaster />
+
       <div className=" container jumbotron column-creation-wrapper bg-light">
         <div>
           <h1 className="display-4 text-center">
@@ -93,9 +112,7 @@ const ColumnCreation = () => {
                     className="form-control"
                     onChange={(event) => setSelectedService(event.target.value)}
                   >
-                      <option>
-                        -- SELECT SERVICE --
-                      </option>
+                    <option>-- SELECT SERVICE --</option>
                     {services.map((service) => (
                       <option key={service._id} value={service.title}>
                         {service.title}

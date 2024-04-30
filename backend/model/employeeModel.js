@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const employeeSchema = new mongoose.Schema({
+  service: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Service",
+  },
   firstname: {
     type: String,
     require: true,
