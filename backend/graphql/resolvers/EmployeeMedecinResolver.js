@@ -1,5 +1,5 @@
-import { Employee } from "../../model/employeeModel.js";
-import { Medecin } from "../../model/MedecinModel.js";
+import Employee from "../../model/employeeModel.js";
+import Doctor from "../../model/doctorModel.js";
 const employeeMedecinResolvers = {
   Query: {
     async employee(_, { ID }) {
@@ -64,7 +64,7 @@ const employeeMedecinResolvers = {
       }
 
       // Créez une nouvelle instance de Medecin
-      const newMedecin = new Medecin({
+      const newMedecin = new Doctor({
         employee: employeeID,
         Type: Type,
         categorie: categorie,
@@ -85,7 +85,7 @@ const employeeMedecinResolvers = {
       _,
       { medecinID, medecinInput: { Type, categorie, responsabilite } }
     ) {
-      const updatedMedecin = await Medecin.findByIdAndUpdate(
+      const updatedMedecin = await Doctor.findByIdAndUpdate(
         medecinID,
         {
           Type: Type,

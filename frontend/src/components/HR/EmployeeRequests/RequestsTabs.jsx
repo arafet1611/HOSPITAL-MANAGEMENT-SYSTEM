@@ -1,33 +1,61 @@
 function RequestsTabs() {
-    return (
-      <div className="py-2 bg-light shadow">
-        <div className="col-md-12">
-          <ul className="nav d-flex justify-content-center">
-            <li className="nav-item mx-lg-4">
-              <a to="/" className="btn nav-link btn-info rounded-pill text-dark px-4 light-300">
-                Demande de Congé
-              </a>
-            </li>
-            <li className="nav-item mx-lg-4">
-              <a to="/" className="btn nav-link btn-info rounded-pill text-dark px-4 light-300">
-                Demande de Formation
-              </a>
-            </li>
-            <li className="nav-item mx-lg-4">
-              <a to="/" className="btn nav-link btn-info rounded-pill text-dark px-4 light-300">
-                Demande d&apos;Équipement
-              </a>
-            </li>
-            <li className="nav-item mx-lg-4">
-              <a to="/" className="btn nav-link btn-info rounded-pill text-dark px-4 light-300">
-                Question Générale
-              </a>
-            </li>
-          </ul>
-        </div>
+  return (
+    <>
+      <style>{styles}</style>
+
+      <div className="filter col-md-12 p-2 d-flex justify-content-center">
+        <ul className="nav">
+          <li className="nav-item mx-lg-4">
+            <a to="/" className="link text-white px-2">
+              Demande de Congé
+            </a>
+          </li>
+          <li className="nav-item mx-lg-4">
+            <a to="/" className="link text-white px-2">
+              Demande de Formation
+            </a>
+          </li>
+          <li className="nav-item mx-lg-4">
+            <a to="/" className="link text-white px-2">
+              Demande d&apos;Équipement
+            </a>
+          </li>
+          <li className="nav-item mx-lg-4">
+            <a to="/" className="link text-white px-2">
+              Question Générale
+            </a>
+          </li>
+          <li className="nav-item mx-lg-4">
+            <a to="/" className="link text-white px-2">
+              demande document
+            </a>
+          </li>
+        </ul>
       </div>
-    );
+    </>
+  );
+}
+
+export default RequestsTabs;
+
+const styles = `
+  .filter {
+    background-color: #0056b3;
+  }
+  .link {
+   
+    color: white;
+    text-decoration: none !important;
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
   }
   
-  export default RequestsTabs;
-  
+  .link:hover {
+    background-color: #002D62;
+    color: #ffffff !important;
+    transform: scale(1.05); 
+  } 
+  .nav-item:hover .link {
+    background-color: #002D62;
+    
+  }
+`;

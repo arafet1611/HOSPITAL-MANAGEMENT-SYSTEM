@@ -45,7 +45,7 @@ function FilderSideBar() {
           </div>
 
           <div className="form-group mb-3">
-            <label htmlFor="employeeStatus">État de l'Employée :</label>
+            <label htmlFor="employeeStatus">État de l&apos;Employée :</label>
             <div className="form-check form-check-inline">
               <input className="form-check-input" type="checkbox" value="Active" id="Active" />
               <label className="form-check-label" htmlFor="Active">Actif</label>

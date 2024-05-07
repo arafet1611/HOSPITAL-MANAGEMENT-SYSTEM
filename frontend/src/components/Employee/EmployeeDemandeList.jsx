@@ -22,7 +22,7 @@ const EmployeeDemandeList = () => {
   return (
     <nav className="leftNav">
       <div
-        className="employeeDetail container"
+        className="employeeDetail container my-5 p-3 bg-white shadow"
         style={{
           margin: "1rem",
           marginTop: "4rem",

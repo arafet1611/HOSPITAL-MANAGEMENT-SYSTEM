@@ -7,29 +7,31 @@ const employeeSchema = new mongoose.Schema({
   },
   firstname: {
     type: String,
-    require: true,
   },
   lastname: {
     type: String,
-    require: true,
   },
   image: {
     type: String,
   },
+  password: {
+    type: String,
+  },
   phone: {
     type: String,
-    require: true,
   },
   email: {
     type: String,
-    require: true,
   },
-  password: {
+  sex: {
     type: String,
-    require: true,
+  },
+  job: {
+    type: String,
   },
   dateJoining: {
     type: Date,
   },
 });
-export const Employee = mongoose.model("Employee", employeeSchema);
+const Employee = mongoose.model("Employee", employeeSchema);
+export default Employee;

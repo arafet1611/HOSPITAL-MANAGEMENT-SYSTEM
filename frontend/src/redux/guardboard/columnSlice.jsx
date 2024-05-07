@@ -3,14 +3,17 @@ import { createSlice } from "@reduxjs/toolkit";
 export const columnSlice = createSlice({
   name: "columns",
   initialState: {
-    columnsData: [] // Initialize columnsData as an empty array
+    columnsData: [] 
   },
   reducers: {
+    updateColumnsData: (state, action) => {
+      state.columnsData = action.payload;
+    },
     addColumns: (state, action) => {
-      state.columnsData = action.payload; // Update columnsData with the payload
+      state.columnsData = action.payload; 
     }
   }
 });
 
-export const { addColumns } = columnSlice.actions;
+export const { updateColumnsData , addColumns  } = columnSlice.actions;
 export default columnSlice.reducer;

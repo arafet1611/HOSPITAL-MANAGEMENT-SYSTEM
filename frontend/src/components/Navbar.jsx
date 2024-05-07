@@ -1,10 +1,21 @@
 import "../Styles/Navbar.css";
 import { NavLink } from "react-router-dom";
 import { useSelector } from 'react-redux'
-
+import { useEffect , useState } from "react";
 function Navbar() {
   const isNavbarSticky = useSelector((state) => state.navbar.isNavbarSticky);
-
+  const [ userInfo , setUserInfo ] = useState(null);
+  useEffect(() => {
+    const storedUserInfo = localStorage.getItem("userInfo");
+  
+    try {
+      if (storedUserInfo) setUserInfo(JSON.parse(storedUserInfo));
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+      setUserInfo(null);
+    }
+  }, []);
+  console.log(userInfo)
   return (
     <div className={isNavbarSticky ? 'sticky-top' : ''}>
       <nav className="navbar navbar-expand-lg navbar-light bg-light  shadow ">
@@ -157,21 +168,20 @@ function Navbar() {
               </li>
             </ul>
             <div className="navbar align-self-center d-flex">
-              <NavLink
+{   !userInfo ? (<NavLink
                 className="nav-link text-success p-2"
                 to="/login"
                 exact
                 title="Login"
               >
                 Login
-              </NavLink>
-              <NavLink
+              </NavLink>): (<>  <NavLink
                 className="nav-link text-success"
-                to="/"
+                to="/my-profile"
                 exact
                 title="/profile"
               >
-                Hi, Mr <strong> Arafet Alaya </strong>
+                Hi, Mr <strong> {userInfo.firstname} {userInfo.lastname} </strong>
               </NavLink>
               <NavLink className="nav-link" to="/notices" exact title="Notices">
                 <i className="bi-bell text-primary fs-4 ms-2" role="img"></i>
@@ -181,7 +191,9 @@ function Navbar() {
                   className="bi-box-arrow-right text-danger fs-4 ms-2"
                   role="img"
                 ></i>
-              </NavLink>
+              </NavLink></> )}
+              
+            
             </div>
           </div>
         </div>

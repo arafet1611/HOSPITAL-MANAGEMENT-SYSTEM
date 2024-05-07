@@ -21,7 +21,6 @@ const updateNumberOfValues = async (modelName, columnUpdates) => {
     });
 
     await DynamicModel.init();
-    console.log(DynamicModel);
     return { message: "Default NumberOfvalues updated successfully" };
   } catch (error) {
     console.error(error);
@@ -36,7 +35,6 @@ const getboardtableSchemabyService = async (req, res) => {
     if (!serviceName) {
       return res.status(400).json({ error: "Service name is required." });
     }
-    console.log(serviceName);
     try {
       const serviceSchemaobj = await SchemaObjectModel.findOne({
         schemaName: serviceName,
@@ -49,7 +47,6 @@ const getboardtableSchemabyService = async (req, res) => {
       }
 
       res.status(200).json({ serviceSchemaobj });
-      console.log("Service schema:", serviceSchemaobj);
     } catch (error) {
       res.status(500).json({ error: "Failed to get schema data by service." });
       console.error("Error finding schema object:", error);
@@ -99,15 +96,13 @@ const createboardtableSchema = async (req, res) => {
     });
 
     const dynamicSchema = new mongoose.Schema(schemaFields);
-    console.log(dynamicSchema);
-    const DynamicModel = mongoose.model(schemaName, dynamicSchema);
-
-    const HistoryModel = mongoose.model(schemaName + "_history", dynamicSchema);
-    const serviceSchemaobj = DynamicModel.schema.obj;
-
-    if (HistoryModel) {
-      console.log(`Schema "${schemaName}"_history created successfully`);
+    let DynamicModel = null;
+    if (!mongoose.connection.models[schemaName]) {
+      DynamicModel = mongoose.connection.models[schemaName];
+    } else {
+      DynamicModel = mongoose.connection.models[schemaName];
     }
+
     if (DynamicModel) {
       res
         .status(201)
@@ -138,11 +133,9 @@ const updateboardtableBydates = async (req, res) => {
   try {
     const { Dates, SeniorList, AssistantList, InterneList } = req.body;
     const { schemaName } = req.params;
-    console.log(schemaName);
     const serviceSchemaobj = await SchemaObjectModel.findOne({
       schemaName: schemaName,
     });
-    console.log(serviceSchemaobj);
     if (!serviceSchemaobj) {
       return res
         .status(404)
@@ -150,7 +143,6 @@ const updateboardtableBydates = async (req, res) => {
     }
 
     const schemaConfig = serviceSchemaobj.schemaObject;
-    console.log(schemaConfig);
 
     if (schemaConfig.service) {
       schemaConfig.service = {
@@ -216,11 +208,99 @@ const updateboardtableBydates = async (req, res) => {
       };
     }
 
-    const ObjectModel = mongoose.model(schemaName, schemaConfig);
-    const oldData = await ObjectModel.find();
+    let ObjectModel = null;
+    if (mongoose.connection.models[schemaName]) {
+      ObjectModel = mongoose.connection.models[schemaName];
+    } else {
+      return res.status(404).json({ error: "Schema model not found." });
+    }
+    let oldData;
+    try {
+      oldData = await ObjectModel.find();
+    } catch (error) {
+      return res.status(500).json({ error: "Failed to fetch old data." });
+    }
 
-    const HistoryModel = mongoose.model(schemaName + "_history", schemaConfig);
+    if (!oldData || oldData.length === 0) {
+      return res.status(404).json({ error: "No existing data found." });
+    }
+    let HistoryModel = null;
+    const HistorySchema = new mongoose.Schema({
+      fieldName: {
+        type: String,
+        required: true,
+      },
+      date: {
+        type: String,
+      },
+      oldValue: {
+        type: String,
+        required: true,
+      },
+      newValue: {
+        type: String,
+        required: true,
+      },
+      dateOfChange: {
+        type: Date,
+        default: Date.now,
+      },
+    });
+    if (!mongoose.connection.models[schemaName + "_history"]) {
+      HistoryModel = mongoose.model(schemaName + "_history", HistorySchema);
+    } else {
+      HistoryModel = mongoose.connection.models[schemaName + "_history"];
+    }
+    if (HistoryModel) {
+      console.log(`Schema "${schemaName}"_history created successfully`);
+    }
 
+    const savedHistoryData = [];
+    Dates.forEach((date, index) => {
+      const oldDataForDate = oldData.find((data) => data.Date === date);
+      const seniorHasChanges =
+        oldDataForDate && oldDataForDate.Senior !== SeniorList[index];
+
+      if (seniorHasChanges) {
+        const newHistoryData = new HistoryModel({
+          fieldName: "Senior",
+          date: oldDataForDate.Date,
+          oldValue: oldDataForDate.Senior,
+          newValue: SeniorList[index],
+        });
+        savedHistoryData.push(newHistoryData.save());
+      }
+
+      // Check for changes in Assistant field
+      const assistantHasChanges =
+        oldDataForDate && oldDataForDate.Assistant !== AssistantList[index];
+
+      if (assistantHasChanges) {
+        const newHistoryData = new HistoryModel({
+          fieldName: "Assistant",
+          date: oldDataForDate.Date,
+          oldValue: oldDataForDate.Assistant,
+          newValue: AssistantList[index],
+        });
+
+        savedHistoryData.push(newHistoryData.save());
+      }
+
+      // Check for changes in Interne field
+      const interneHasChanges =
+        oldDataForDate && oldDataForDate.Interne !== InterneList[index];
+
+      if (interneHasChanges) {
+        const newHistoryData = new HistoryModel({
+          fieldName: "Interne",
+          date: oldDataForDate.Date,
+          oldValue: oldDataForDate.Interne,
+          newValue: InterneList[index],
+        });
+
+        savedHistoryData.push(newHistoryData.save());
+      }
+    });
     const updatedData = Dates.map(async (date, index) => {
       const filter = { Date: date };
       const update = {
@@ -231,14 +311,12 @@ const updateboardtableBydates = async (req, res) => {
       const options = { new: true, upsert: true };
       return ObjectModel.findOneAndUpdate(filter, update, options);
     });
-
-    // Wait for all document updates to complete
+    await Promise.all(savedHistoryData);
     const updatedResults = await Promise.all(updatedData);
-    await HistoryModel.create({ schemaName, oldData });
-
-    // Check if any documents were updated
     if (updatedResults.some((result) => result)) {
-      res.status(200).json({ message: "Data updated successfully" });
+      res
+        .status(200)
+        .json({ message: "Data updated successfully and updatedSaved" });
     } else {
       res.status(404).json({ error: "No documents were updated" });
     }
@@ -263,7 +341,6 @@ const createboardtable = async (req, res) => {
     }
 
     const schemaConfig = serviceSchemaobj.schemaObject;
-    console.log(schemaConfig);
     schemaConfig.service = {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Service",
@@ -300,15 +377,19 @@ const createboardtable = async (req, res) => {
       default: schemaConfig.Interne_NumberOfvalue.default,
     };
 
-    const ObjectModel = mongoose.model(schemaName, schemaConfig);
-
+    let ObjectModel = null;
+    if (!mongoose.connection.models[schemaName]) {
+      ObjectModel = mongoose.model(schemaName, schemaConfig);
+    } else {
+      ObjectModel = mongoose.connection.models[schemaName];
+    }
     const savedData = [];
     Dates.forEach((date, index) => {
       const newData = new ObjectModel({
         Date: date,
-        Senior: SeniorList[index],
-        Assistant: AssistantList[index],
-        Interne: InterneList[index],
+        Senior: SeniorList[index] || "",
+        Assistant: AssistantList[index] || "",
+        Interne: InterneList[index] || "",
       });
 
       savedData.push(newData.save());
@@ -326,10 +407,11 @@ const createboardtable = async (req, res) => {
   }
 };
 
-const getBoardTable = async (req, res) => {
+const getBoardTableByDate = async (req, res) => {
   try {
     const { schemaName } = req.params;
-
+    const { Dates } = req.query;
+    const jsonDate = JSON.parse(Dates);
     const serviceSchemaobj = await SchemaObjectModel.findOne({
       schemaName: schemaName,
     });
@@ -340,7 +422,7 @@ const getBoardTable = async (req, res) => {
         .json({ error: "Schema data not found for the specified service." });
     }
 
-    const schemaConfig = { ...serviceSchemaobj.schemaObject };
+    const schemaConfig = serviceSchemaobj.schemaObject;
 
     if (schemaConfig.service) {
       schemaConfig.service = {
@@ -402,24 +484,77 @@ const getBoardTable = async (req, res) => {
         default: schemaConfig.Interne_NumberOfvalue.default,
       };
     }
-
-    const schema = new mongoose.Schema(schemaConfig);
-
-    const ObjectModel = mongoose.model(schemaName, schema);
-
-    const ObjectModelData = await ObjectModel.find();
+    let ObjectModel = null;
+    if (!mongoose.connection.models[schemaName]) {
+      ObjectModel = mongoose.model(schemaName, schemaConfig);
+    } else {
+      ObjectModel = mongoose.connection.models[schemaName];
+    }
+    const ObjectModelData = await ObjectModel.find({ Date: { $in: jsonDate } });
 
     res.status(200).json(ObjectModelData);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+const getBoardHistoryTableByDate = async (req, res) => {
+  try {
+    const { schemaName } = req.params;
+    const { Dates } = req.query;
+    const datesArray = JSON.parse(Dates);
 
+    const HistorySchemaName = schemaName.toLowerCase() + "_history";
+
+    let HistoryModel = null;
+    const HistorySchema = new mongoose.Schema({
+      fieldName: {
+        type: String,
+        required: true,
+      },
+      date: {
+        type: String,
+      },
+      oldValue: {
+        type: String,
+        required: true,
+      },
+      newValue: {
+        type: String,
+        required: true,
+      },
+      dateOfChange: {
+        type: Date,
+        default: Date.now,
+      },
+    });
+    if (!mongoose.connection.models[HistorySchemaName]) {
+      HistoryModel = mongoose.model(HistorySchemaName, HistorySchema);
+    } else {
+      HistoryModel = mongoose.connection.models[HistorySchemaName];
+    }
+
+    const historyData = [];
+
+    const HistoryModelDatas = await HistoryModel.find();
+    for (const date of datesArray) {
+      for (const data of HistoryModelDatas) {
+        if (data.date === date) {
+          historyData.push(data);
+        }
+      }
+    }
+
+    res.status(200).json(historyData);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 export {
   createboardtableSchema,
   createboardtable,
   updateNumberOfValues,
   updateboardtableBydates,
   getboardtableSchemabyService,
-  getBoardTable,
+  getBoardTableByDate,
+  getBoardHistoryTableByDate,
 };

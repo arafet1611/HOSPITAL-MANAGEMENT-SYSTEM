@@ -1,23 +1,13 @@
-import { useState } from "react";
 
 const EmployeeCard = ({
   empData,
-  handleEdit,
-  handleReRender,
-  handlestickyNavbar,
   isActive,
+  
 }) => {
-  const { firstname, lastname, job, email, image  } = empData;
-  const [dropDown, setDropdown] = useState(false);
+  const {firstname, lastname, job, email, image } = empData;
 
-  const handleDelete = async (id) => {
-    console.log(id);
-    try {
-      handleReRender();
-    } catch (err) {
-      console.log(err);
-    }
-  };
+
+
   return (
     <div className="card-component">
       <div className="card-inner">
@@ -32,27 +22,39 @@ const EmployeeCard = ({
               title={isActive ? "Active" : "InActive"}
             ></i>
           </div>
-          <div className="dropdownContainer">
+          {/* <div className="dropdownContainer">
             <i
               className="bi bi-three-dots-vertical"
               size={20}
-              onClick={() => setDropdown(!dropDown)}
+              onMouseLeave={() => {
+                hideEmployeeDetails();
+              }}
+              onClick={() => {
+                setDropdown(!dropDown);
+              }}
             ></i>
-            {dropDown && (
-              <ul className="drop-down" onMouseLeave={() => setDropdown(false)}>
+           {dropDown && (
+              <ul
+                className="drop-down"
+                onMouseLeave={() => {
+                  setDropdown(false);
+                  hideEmployeeDetails();
+                }}
+              >
                 <li
                   onClick={() => {
-                    handleEdit(empData._id);
-                    handlestickyNavbar();
+                    dispatch(setShowModal(true));
+                    dispatch(setShowSecondModal(false));
+                    dispatch(setNavbarSticky(false));
                   }}
                 >
                   Edit
                 </li>
-                <li onClick={() => handleDelete(empData._id)}>Delete</li>
+                <li onClick={() => handleDelete()}>Delete</li>
               </ul>
             )}
-          </div>
-        </div>
+          </div>*/}
+         </div>
         <div className="container">
           <div className="d-flex justify-content-center align-items-center profileImage">
             <img

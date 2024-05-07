@@ -2,7 +2,7 @@ const EmployeeDetails = ({ empDetails }) => {
   return (
     <nav className="leftNav">
       <div
-        className="employeeDetail container"
+        className="employeeDetail container my-5 p-3 bg-white shadow"
         style={{
           margin: "1rem",
           marginTop: "4rem",
@@ -13,11 +13,20 @@ const EmployeeDetails = ({ empDetails }) => {
         }}
       >
         <p className="mb-2 text-secondary">PROFILE IMAGE</p>
-        <img
-          src={empDetails.image}
-          alt="Employee"
-          className="rounded-circle mb-3"
-        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={empDetails.image}
+            alt="Employee"
+            style={{ width: "235px", borderRadius: "50%" }}
+            className="rounded-circle"
+          />
+        </div>
         <p className="mb-2 text-secondary">DETAILS</p>
 
         <div className="form-floating bg-light">
