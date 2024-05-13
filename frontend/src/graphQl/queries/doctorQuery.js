@@ -6,6 +6,7 @@ const GET_DOCTORS = gql`
       employee {
         firstname
         lastname
+        service
       }
       Type
       categorie

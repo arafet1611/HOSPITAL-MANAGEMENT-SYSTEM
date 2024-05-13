@@ -22,6 +22,7 @@ const employeeSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique: true,
   },
   sex: {
     type: String,

@@ -8,6 +8,7 @@ const GET_EMPLOYEES = gql`
       lastname
       phone
       email
+      image
       sex
       job
     }
@@ -21,6 +22,7 @@ const GET_EMPLOYEE = gql`
       lastname
       email
       phone
+
       job
       dateJoining
     }

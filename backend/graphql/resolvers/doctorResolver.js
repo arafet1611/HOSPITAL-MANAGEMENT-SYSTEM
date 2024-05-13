@@ -1,7 +1,10 @@
 import Employee from "../../model/employeeModel.js";
 import Doctor from "../../model/doctorModel.js";
+import Nurse from "../../model/nurseModel.js";
+import Technician from "../../model/technicianModel.js";
 const DoctorResolver = {
   Query: {
+    
     doctors: async () => {
       try {
         return await Doctor.find({}).populate("employee");

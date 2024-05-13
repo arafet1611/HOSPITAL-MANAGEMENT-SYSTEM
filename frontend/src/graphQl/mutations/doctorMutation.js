@@ -6,6 +6,7 @@ export const CREATE_DOCTOR = gql`
       employee {
         firstname
         lastname
+        service
       }
       Type
       categorie

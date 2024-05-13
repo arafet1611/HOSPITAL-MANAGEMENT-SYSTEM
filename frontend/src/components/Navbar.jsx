@@ -1,13 +1,15 @@
 import "../Styles/Navbar.css";
 import { NavLink } from "react-router-dom";
-import { useSelector } from 'react-redux'
-import { useEffect , useState } from "react";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { toast, Toaster } from "react-hot-toast";
+
 function Navbar() {
   const isNavbarSticky = useSelector((state) => state.navbar.isNavbarSticky);
-  const [ userInfo , setUserInfo ] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("userInfo");
-  
+
     try {
       if (storedUserInfo) setUserInfo(JSON.parse(storedUserInfo));
     } catch (error) {
@@ -15,9 +17,18 @@ function Navbar() {
       setUserInfo(null);
     }
   }, []);
-  console.log(userInfo)
+  const logout = () => {
+    if (localStorage.getItem("userInfo")) {
+      localStorage.removeItem("userInfo");
+      toast.success("Logout successful" );
+
+      setUserInfo(null);
+    }
+  };
+  console.log(userInfo);
   return (
-    <div className={isNavbarSticky ? 'sticky-top' : ''}>
+    <><Toaster />
+    <div className={isNavbarSticky ? "sticky-top" : ""}>
       <nav className="navbar navbar-expand-lg navbar-light bg-light  shadow ">
         <div className="container">
           <NavLink
@@ -168,37 +179,62 @@ function Navbar() {
               </li>
             </ul>
             <div className="navbar align-self-center d-flex">
-{   !userInfo ? (<NavLink
-                className="nav-link text-success p-2"
-                to="/login"
-                exact
-                title="Login"
-              >
-                Login
-              </NavLink>): (<>  <NavLink
-                className="nav-link text-success"
-                to="/my-profile"
-                exact
-                title="/profile"
-              >
-                Hi, Mr <strong> {userInfo.firstname} {userInfo.lastname} </strong>
-              </NavLink>
-              <NavLink className="nav-link" to="/notices" exact title="Notices">
-                <i className="bi-bell text-primary fs-4 ms-2" role="img"></i>
-              </NavLink>
-              <NavLink className="nav-link" onClick="" to="" title="Logout">
-                <i
-                  className="bi-box-arrow-right text-danger fs-4 ms-2"
-                  role="img"
-                ></i>
-              </NavLink></> )}
-              
-            
+              {!userInfo ? (
+                <NavLink
+                  className="nav-link text-success p-2"
+                  to="/login"
+                  exact
+                  title="Login"
+                >
+                  Login
+                </NavLink>
+              ) : (
+                <>
+                  {" "}
+                  <NavLink
+                    className="nav-link text-success"
+                    to="/my-profile"
+                    exact
+                    title="/profile"
+                  >
+                    Hello, Mr{" "}
+                    <strong>
+                      {" "}
+                      {userInfo.firstname.charAt(0).toUpperCase() +
+                        userInfo.firstname.slice(1)}{" "}
+                      {userInfo.lastname.charAt(0).toUpperCase() +
+                        userInfo.lastname.slice(1)}{" "}
+                    </strong>
+                  </NavLink>
+                  <NavLink
+                    className="nav-link"
+                    to="/notices"
+                    exact
+                    title="Notices"
+                  >
+                    <i
+                      className="bi-bell text-primary fs-4 ms-2"
+                      role="img"
+                    ></i>
+                  </NavLink>
+                  <NavLink
+                    className="nav-link"
+                    onClick={logout}
+                    title="Logout"
+                  >
+                    <i
+                      className="bi-box-arrow-right text-danger fs-4 ms-2"
+                      role="img"
+                    ></i>
+                  </NavLink>
+                </>
+              )}
             </div>
           </div>
         </div>
       </nav>
     </div>
+    </>
   );
 }
 

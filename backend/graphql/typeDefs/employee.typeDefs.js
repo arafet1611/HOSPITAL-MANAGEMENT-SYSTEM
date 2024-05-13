@@ -8,14 +8,14 @@ const EmployeeTypeDefs = gql`
     email: String
     phone: String
     sex: String
+    image:  String
     job: String
     dateJoining: String
     service: String
   }
-  
 
   type Query {
-    employee(ID: ID!): Employee
+    employee: Employee
     employees: [Employee]
   }
   input EmployeeInput {

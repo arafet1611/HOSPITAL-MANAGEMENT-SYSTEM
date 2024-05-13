@@ -1,6 +1,7 @@
 import Employee from "../../model/employeeModel.js";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
+
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
   port: 587,
@@ -54,7 +55,7 @@ const EmployeeResolver = {
     async createEmployee(
       _,
       {
-        employeeInput: { firstname, lastname, phone, email, sex, job, service },
+        employeeInput: { firstname, lastname, phone, email, sex, job,service },
       }
     ) {
       const randomPassword = generateRandomPassword(); // You need to define this function

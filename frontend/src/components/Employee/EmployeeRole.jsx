@@ -1,4 +1,5 @@
-const EmployeeRole = () => {
+const EmployeeRole = ({empRole}) => {
+
     return (
       <nav className="leftNav">
         <div
@@ -19,7 +20,7 @@ const EmployeeRole = () => {
               type="text"
               id="form12"
               className="form-control bg-light"
-              value="Assistant"
+              value={empRole.Type}
               readOnly
             />
             <label htmlFor="form12">Role</label>

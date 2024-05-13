@@ -1,4 +1,5 @@
 import Employee from "../model/employeeModel.js";
+import Doctor from "../model/doctorModel.js";
 import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
 import nodemailer from "nodemailer";
@@ -34,17 +35,77 @@ async function sendEmail(toEmail, subject, text) {
     console.error("Error sending email:", error);
   }
 }
+const getEmployeeById = async (req, res) => {
+  try {
+    const { _id, job } = req.user;
+
+    let employeeData;
+
+    if (job === "doctor") {
+      employeeData = await Doctor.findOne({ employee: _id }).populate({
+        path: "employee",
+        populate: { path: "service" },
+      });
+    } else if (job === "nurse") {
+      employeeData = await Nurse.findOne({ employee: _id }).populate(
+        "employee"
+      );
+    } else if (job === "human resource") {
+      employeeData = await HumanResource.findOne({ employee: _id }).populate(
+        "employee"
+      );
+    }
+
+    if (!employeeData) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
+
+    return res.status(200).json({ employeeData });
+  } catch (error) {
+    console.error("Error fetching Employee:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const updateEmployeeImage = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const { filename } = req.file;
+
+    const existingEmployee = await Employee.findById(employeeId);
+    if (!existingEmployee) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
+
+    const result = await Employee.findByIdAndUpdate(employeeId, {
+      image: filename,
+    });
+
+    if (result) {
+      return res
+        .status(200)
+        .json({ message: "Employee image updated successfully" });
+    } else {
+      return res.status(500).json({ error: "Failed to update employee image" });
+    }
+  } catch (error) {
+    console.error("Error updating employee image:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 const resendPassword = async (req, res) => {
   try {
     const { email } = req.body;
     const newPassword = generateRandomPassword();
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     const employee = await Employee.findOne({ email });
+    console.log(hashedPassword);
     const updatedUser = await Employee.findOneAndUpdate(
       { email },
-      { hashPassword: hashedPassword },
+      { password: hashedPassword },
       { new: true }
     );
+    console.log("updatedUser", updatedUser);
     if (updatedUser) {
       await sendEmail(
         email,
@@ -67,19 +128,21 @@ const resendPassword = async (req, res) => {
 const authEmployee = async (req, res) => {
   try {
     const { email, userPassword } = req.body;
-    console.log(userPassword);
+    console.log("Received password:", userPassword);
     const user = await Employee.findOne({ email });
-    console.log(user);
+    console.log("User:", user);
     if (user) {
-      const { password } = user;
-      const verified = bcrypt.compareSync(userPassword, password);
-      console.log(verified);
+      console.log("User password hash:", user.password);
+
+      const verified = bcrypt.compareSync(userPassword, user.password);
+      console.log("Password verified:", verified);
       if (verified) {
         res.status(201).json({
           _id: user._id,
           firstname: user.firstname,
           lastname: user.lastname,
           email: user.email,
+          job: user.job,
           token: generateToken(user._id),
         });
       } else {
@@ -93,5 +156,4 @@ const authEmployee = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-export { authEmployee, resendPassword };
+export { authEmployee, updateEmployeeImage, resendPassword, getEmployeeById };

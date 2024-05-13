@@ -7,16 +7,22 @@ import EmployeeTypeDefs from "./graphql/typeDefs/employee.typeDefs.js";
 import NurseTypeDefs from "./graphql/typeDefs/Nurse.typeDefs.js";
 import TechnicianTypeDefs from "./graphql/typeDefs/Technician.typeDefs.js";
 import WorkerTypeDefs from "./graphql/typeDefs/worker.typeDefs.js";
+import SecretairyTypeDefs from "./graphql/typeDefs/secretairy.typeDefs.js";
+import HrTypeDefs from "./graphql/typeDefs/hr.typeDefs.js";
 import DoctorResolver from "./graphql/resolvers/doctorResolver.js";
 import EmployeeResolver from "./graphql/resolvers/employeeResolver.js";
 import NurseResolver from "./graphql/resolvers/nurseResolver.js";
 import TechnicianResolver from "./graphql/resolvers/technicianResolver.js";
 import WorkerResolver from "./graphql/resolvers/workerResolver.js";
+import SecretairyResolver from "./graphql/resolvers/secretairyResolver.js";
+import HrResolver from "./graphql/resolvers/hrResolver.js";
 import EmployeeRoute from "./routes/employeeRoute.js";
 import VacationRoute from "./routes/vacationRoute.js";
 import ServicesRoute from "./routes/serviceRoute.js";
 import GuardBoardRoute from "./routes/guardBoardRoute.js";
 import EmployeeGaurdboardRoute from "./routes/employeeGuardBoardRoute.js";
+import RosterRoute from "./routes/rosterRoute.js";
+import AdminRoute from "./routes/adminRoute.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 dotenv.config();
@@ -27,6 +33,8 @@ const typeDefsMerge = [
   NurseTypeDefs,
   TechnicianTypeDefs,
   WorkerTypeDefs,
+  SecretairyTypeDefs,
+  HrTypeDefs,
 ];
 const resolversMerge = [
   EmployeeResolver,
@@ -34,6 +42,8 @@ const resolversMerge = [
   NurseResolver,
   TechnicianResolver,
   WorkerResolver,
+  SecretairyResolver,
+  HrResolver,
 ];
 const port = 5000 || process.env.PORT;
 async function startServer() {
@@ -51,8 +61,11 @@ async function startServer() {
   app.use("/api/vacations", VacationRoute);
   app.use("/api/services", ServicesRoute);
   app.use("/api/guardboard", GuardBoardRoute);
+  app.use("/api/rosters", RosterRoute);
   app.use("/api/employeeGaurdboard", EmployeeGaurdboardRoute);
   app.use("/api/employee", EmployeeRoute);
+    app.use("/api/admin", AdminRoute);
+
   server.applyMiddleware({ app: app });
 
   app.use((req, res) => {

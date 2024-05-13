@@ -1,32 +1,44 @@
-import EmployeeDemandeList from "../components/Employee/EmployeeDemandeList";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import EmployeeDetails from "../components/Employee/EmployeeDetails";
-import EmployeeGaurdIndicator from "../components/Employee/EmployeeGaurdIndicator";
-import EmployeeRequestList from "../components/Employee/EmployeeRequestList";
 import EmployeeRole from "../components/Employee/EmployeeRole";
 import EmployeeTeamList from "../components/Employee/EmployeeTeamList";
-import maleDoctor from "../assets/img/maleDoctor.png";
+import EmployeeGaurdIndicator from "../components/Employee/EmployeeGaurdIndicator";
+import EmployeeDemandeList from "../components/Employee/EmployeeDemandeList";
+import EmployeeRequestList from "../components/Employee/EmployeeRequestList";
+
 function EmployeeProfile() {
-  const dummyEmployee = {
-    _id: "1",
-    image: maleDoctor,
-    firstname: "Amal",
-    lastname: "Belhadj",
-    sex: "Female",
-    email: "amalbelhadj@example.com",
-    phone: "123-456-7890",
-    service: "Cardiologue",
-    dateofjoining: "2022-01-01",
-    active: false,
-  };
+  const [employeeData, setEmployeeData] = useState(null);
+  useEffect(() => {
+    const userString = localStorage.getItem("userInfo");
+    const user = JSON.parse(userString);
+      
+    const fetchEmployeeData = async (job) => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/employee/${job}/getEmployeeById`, {
+          headers: {
+            authorization: `Bearer ${user.token}`,
+          },
+        });
+        setEmployeeData(response.data.employeeData);
+      } catch (error) {
+        console.error("Error fetching employee data:", error);
+      }
+    };
+
+    fetchEmployeeData(user.job);
+  }, []);
+
+
   return (
     <div className="container-fluid">
       <div className=" container  mt-2">
         <div className="row">
           <div className="col-md-4 ">
-            <EmployeeDetails empDetails={dummyEmployee} />
+          {employeeData ? ( <EmployeeDetails empDetails={employeeData } />) : ( <div></div>)}
           </div>
           <div className="col-md-4 ">
-            <EmployeeRole />
+           {employeeData ? <EmployeeRole  empRole={employeeData }/> : ( <div></div>)} 
             <EmployeeTeamList />
           </div>
           <div className="col-md-4 ">

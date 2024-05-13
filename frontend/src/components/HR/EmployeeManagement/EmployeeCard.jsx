@@ -1,11 +1,11 @@
-
+import maleDoctor from "../../../assets/img/maleDoctor.png";
+import femaleDoctor from "../../../assets/img/femaleDoctor.png";
 const EmployeeCard = ({
   empData,
   isActive,
   
 }) => {
-  const {firstname, lastname, job, email, image } = empData;
-
+  const {firstname, lastname, sex ,job, email, image } = empData;
 
 
   return (
@@ -57,12 +57,16 @@ const EmployeeCard = ({
          </div>
         <div className="container">
           <div className="d-flex justify-content-center align-items-center profileImage">
-            <img
+         { image ? ( <img
               className="rounded-circle"
-              src={image}
+              src={`http://localhost:5000/uploads/${image}`}
               alt={firstname}
               style={{ width: "7rem", height: "7rem", objectFit: "cover" }}
-            />
+            />) : (<img
+              src={sex === "male" ? maleDoctor : femaleDoctor}
+              alt="Default Doctor"
+              style={{ width: "7rem", height: "7rem", objectFit: "cover" }}
+            />)}  
           </div>
         </div>
         <div className="container mt-3 text-center">

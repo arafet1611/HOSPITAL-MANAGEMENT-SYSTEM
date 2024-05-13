@@ -21,6 +21,7 @@ const ModelPopup = () => {
   const showSecondModal = useSelector((state) => state.modal.showSecondModal);
   const [employeeId, setEmployeeId] = useState(null);
   const [jobPosition, setJobPosition] = useState("");
+  const [serviceSelected, setServiceSelected] = useState("");
   const [image, setImage] = useState(null);
   const [services, setServices] = useState([]);
 
@@ -50,6 +51,7 @@ const ModelPopup = () => {
         variables: { employeeInput: employeeData },
       });
       setJobPosition(employeeData.job);
+      setServiceSelected(employeeData.service);
       setEmployeeId(employeeCreated.data.createEmployee.id);
 
       e.target.reset();
@@ -122,7 +124,7 @@ const ModelPopup = () => {
       <div className="modalContainer">
         <Toaster />
         {showSecondModal ? (
-          <SecondModal employeeId={employeeId} jobPosition={jobPosition} />
+          <SecondModal employeeId={employeeId} jobPosition={jobPosition} serviceId={serviceSelected} />
         ) : (
           <div>
             {services.length > 0 ? (
@@ -189,10 +191,13 @@ const ModelPopup = () => {
                           name="job"
                           id="job"
                         >
+                          
                           <option value="nurse">infermiére</option>
                           <option value="doctor">medecin</option>
-                          <option value="Technician">technicien</option>
+                          <option value="technician">technicien</option>
                           <option value="worker">ouvrier</option>
+                          <option value="secretairy">secretaire</option>
+                          <option value="Hr">resource humaine</option>
                         </select>
                       </div>
                     </div>

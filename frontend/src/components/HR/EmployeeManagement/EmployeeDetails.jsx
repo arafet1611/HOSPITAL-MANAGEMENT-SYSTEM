@@ -9,10 +9,10 @@ const EmployeeDetails = ({ empDetails, onHide }) => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const dispatch = useDispatch();
-
+  
   const handleEdit = async () => {
     setIsEditMode(true);
-
+    
     setEmployeeId(empDetails.id);
     dispatch(setNavbarSticky(false));
   };
@@ -31,7 +31,7 @@ const EmployeeDetails = ({ empDetails, onHide }) => {
           <Modal.Body className="d-flex align-items-center justify-content-center">
             <div className="employeeDetail container text-center">
               <img
-                src={empDetails.image}
+                src={`http://localhost:5000/uploads/${empDetails.image}`}
                 width={200}
                 height={200}
                 alt="Employee"

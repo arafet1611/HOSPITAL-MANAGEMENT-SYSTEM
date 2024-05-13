@@ -128,7 +128,6 @@ const EmployeesList = ({ setEmployeeId, filters, hideEmployeeDetails }) => {
                 .filter((emp) =>
                   service !== "" ? emp.service === service : true
                 )
-                // .filter((emp) => (active !== "" ? emp.active === active : true))
                 .filter((emp) => (job !== "" ? emp.job === job : true))
                 .map((emp) => {
                   return (

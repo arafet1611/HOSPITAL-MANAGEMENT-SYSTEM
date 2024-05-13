@@ -11,12 +11,15 @@ import { CREATE_DOCTOR } from "../../../graphql/mutations/doctorMutation";
 import { CREATE_NURSE } from "../../../graphql/mutations/nurseMutation";
 import { CREATE_TECHNICIAN } from "../../../graphql/mutations/technicianMutation";
 import { CREATE_WORKER } from "../../../graphql/mutations/workerMutation";
-function SecondModal({ employeeId, jobPosition }) {
+import {CREATE_SECRETAIRY} from "../../../graphQl/mutations/secretairyMutation";
+import {CREATE_HR} from "../../../graphQl/mutations/hrMutation";
+function SecondModal({ employeeId, jobPosition,  serviceId}) {
   const [createDoctor, { loading }] = useMutation(CREATE_DOCTOR);
   const [createNurse] = useMutation(CREATE_NURSE);
   const [createTechnician] = useMutation(CREATE_TECHNICIAN);
   const [createWorker] = useMutation(CREATE_WORKER);
-  
+  const [createSecretairy] = useMutation(CREATE_SECRETAIRY);
+  const [createHr] = useMutation(CREATE_HR)
   const modalContainerRef = useRef(null);
   const showSecondModal = useSelector((state) => state.modal.showSecondModal);
   const dispatch = useDispatch();
@@ -44,12 +47,15 @@ function SecondModal({ employeeId, jobPosition }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const form = e.target;
     const formData = new FormData(form);
     const inputData = {
       Type: formData.get("Type"),
       categorie: formData.get("categorie"),
+      responsabilite: formData.get("responsabilite"),
+    };
+    const inputData1 = {
       responsabilite: formData.get("responsabilite"),
     };
     try {
@@ -69,16 +75,32 @@ function SecondModal({ employeeId, jobPosition }) {
         await createWorker({
           variables: { employeeID: employeeId, workerInput: inputData },
         });
+      } else if (jobPosition === "secretairy") {
+        await createSecretairy({
+          variables: {
+            serviceID: serviceId,
+            employeeID: employeeId,
+            secretairyInput: inputData1,
+          },
+        });
+      } else if (jobPosition === "Hr") {
+        await createHr({
+          variables: {
+            employeeID: employeeId,
+            hrInput: inputData1,
+          },
+        });
       }
-
+  
       form.reset();
-
+  
       dispatch(setShowSecondModal(false));
       dispatch(setShowModal(false));
     } catch (error) {
       toast.error(error.message);
     }
   };
+  
 
   return (
     <Modal

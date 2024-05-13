@@ -405,7 +405,7 @@ console.log("Date:", date);
                 >
                   <div className="d-flex w-100 justify-content-between">
                     <h5 className="mb-1">Role : {data.fieldName}</h5>
-                    <small>{data.dateOfChange}</small>
+                    <small>{data.dateOfChange.toString().substring(0,10)}</small>
                   </div>
                   <p className="mb-1">
                     L'employée <strong>{data.oldValue}</strong> a été remplacée

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
 import img from "../assets/img/login.png";
-import { Link } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 function Login() {
   const [email, setEmail] = useState("");
@@ -12,7 +11,7 @@ function Login() {
     e.preventDefault();
     try {
       
-      const response = await axios.post("http://localhost:5000/api/employee/login", { email, userPassword : password });
+      const response = await axios.post("http://localhost:5000/api/admin/login", { email, userPassword : password });
       localStorage.setItem('userInfo', JSON.stringify(response.data));
       toast.success("Login successful:" , response.data);
       window.location.replace("/");
@@ -33,7 +32,7 @@ function Login() {
             <div className="col-md-10 mx-10 rounded shadow bg-light d-flex">
               <div className="col-md-6">
                 <div className="m-5 text-center">
-                  <h1>Login</h1>
+                  <h1>Login as Admin</h1>
                 </div>
                 <form className="m-5" onSubmit={handleSubmit}>
                   <div className="mb-3 ">
@@ -63,28 +62,7 @@ function Login() {
                     />
                   </div>
                   {error && <p className="text-danger">{error}</p>}
-                  <div className="row mb-3">
-                    <div className="col-6">
-                      <div className="form-check text-start">
-                        <input
-                          className="form-check-input"
-                          type="checkbox"
-                          id="remember-me"
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="remember-me"
-                        >
-                          Remember Me
-                        </label>
-                      </div>
-                    </div>
-                    <div className="col-6">
-                      <div className="text-end">
-                        <Link to={"/forget-password"}>Forgot Password?</Link>
-                      </div>
-                    </div>
-                  </div>
+             
                   <div>
                     <button
                       type="submit"
