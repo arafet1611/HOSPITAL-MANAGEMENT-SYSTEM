@@ -35,6 +35,25 @@ async function sendEmail(toEmail, subject, text) {
     console.error("Error sending email:", error);
   }
 }
+const getDoctorByEmployee = async (req, res) => {
+  try {
+    const { employeeId } = req.body;
+    const employeeData = await Doctor.findOne({
+      employee: employeeId,
+    }).populate({
+      path: "employee",
+      populate: { path: "service" },
+    });
+    if (!employeeData) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
+
+    return res.status(200).json({ employeeData });
+  } catch (error) {
+    console.error("Error fetching Employee:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 const getEmployeeById = async (req, res) => {
   try {
     const { _id, job } = req.user;
@@ -143,6 +162,7 @@ const authEmployee = async (req, res) => {
           lastname: user.lastname,
           email: user.email,
           job: user.job,
+          service: user.service,
           token: generateToken(user._id),
         });
       } else {
@@ -156,4 +176,10 @@ const authEmployee = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-export { authEmployee, updateEmployeeImage, resendPassword, getEmployeeById };
+export {
+  authEmployee,
+  updateEmployeeImage,
+  resendPassword,
+  getEmployeeById,
+  getDoctorByEmployee,
+};

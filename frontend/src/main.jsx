@@ -6,6 +6,8 @@ import store from "./redux/store";
 import "./index.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import {
   ApolloClient,
   InMemoryCache,

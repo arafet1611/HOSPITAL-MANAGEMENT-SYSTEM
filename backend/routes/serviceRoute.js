@@ -6,13 +6,14 @@ import {
   updateService,
   deleteService,
 } from "../controller/serviceController.js";
+import upload from "../middleWares/multer.js";
 
 const router = express.Router();
 
-router.post("/", createService);
+router.post("/", upload.single("image"), createService);
 router.get("/", getAllServices);
 router.get("/:id", getService);
-router.put("/:id", updateService);
+router.put("/:id", upload.single("image"), updateService);
 router.delete("/:id", deleteService);
 
 export default router;

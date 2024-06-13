@@ -37,6 +37,11 @@ const leaveDemandeModel = new mongoose.Schema({
     type: String,
     default: "no reason available",
   },
+  isApplied: {
+    type: Boolean,
+    default: false,
+  },
 });
+
 const LeaveDemande = mongoose.model("LeaveDemandeModel", leaveDemandeModel);
 export default LeaveDemande;

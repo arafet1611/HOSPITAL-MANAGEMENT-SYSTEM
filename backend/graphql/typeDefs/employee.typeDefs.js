@@ -14,7 +14,7 @@ const EmployeeTypeDefs = gql`
     service: String
   }
 
-  type Query {
+   type Query {
     employee: Employee
     employees: [Employee]
   }

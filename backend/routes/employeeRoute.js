@@ -17,7 +17,7 @@ router.put(
   updateEmployeeImage
 );
 router.get("/doctor/getEmployeeById/", protectDoctor, getEmployeeById);
-
+router.get("/:employeeId", getEmployeeById);
 router.get("/nurse/getEmployeeById/", protectNurse, getEmployeeById);
 
 export default router;

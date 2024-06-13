@@ -1,8 +1,14 @@
 import ServiceList from "../components/Admin/serviceManagement/ServiceList";
 import ServiceImage from "../assets/img/Services-image.png";
 import { FaHospital ,FaUserDoctor , FaUserNurse ,FaHospitalUser } from "react-icons/fa6";
+import { useState, useEffect } from "react";
 
 function ServiceManagement() {
+  const [image, setImage] = useState(null);
+useEffect(() => {
+console.log("image" ,image);
+
+},[image])
   return (
     <div className="container-fluid ">
       <div className="container-fluid py-4 px-4  " style={{ backgroundColor: "#0056b3"}}>
@@ -51,7 +57,7 @@ function ServiceManagement() {
 
         <div className="row">
           <div className="col-md-7 ">
-            <ServiceList />
+            <ServiceList setImage={setImage} />
           </div>
           <div className="col-md-5 ">
             <div className="container my-1 p-1 " lang="fr">
@@ -60,7 +66,7 @@ function ServiceManagement() {
                   <strong>Service En Image</strong>
                   <hr className="hr" />
                   <img
-                    src={ServiceImage}
+                    src={ ServiceImage}
                     className="rounded"
                     width={500}
                     height={700}

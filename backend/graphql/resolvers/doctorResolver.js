@@ -1,10 +1,26 @@
 import Employee from "../../model/employeeModel.js";
 import Doctor from "../../model/doctorModel.js";
-import Nurse from "../../model/nurseModel.js";
-import Technician from "../../model/technicianModel.js";
+
 const DoctorResolver = {
   Query: {
-    
+    doctorsByService: async (_, { ServiceId }) => {
+      try {
+        const employees = await Employee.find({ service: ServiceId }).select(
+          "_id"
+        );
+
+        const employeeIds = employees.map((employee) => employee._id);
+console.log(employeeIds);
+        const doctors = await Doctor.find({
+          employee: { $in: employeeIds },
+        }).populate("employee");
+
+        return doctors;
+      } catch (e) {
+        console.error("error getting doctors by service ", e);
+        throw new Error("Error getting doctors by service");
+      }
+    },
     doctors: async () => {
       try {
         return await Doctor.find({}).populate("employee");

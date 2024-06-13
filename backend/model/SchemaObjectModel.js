@@ -5,6 +5,9 @@ const SchemaObjectSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  month: {
+    type: String,
+  },
   schemaObject: {
     type: Object,
     required: true,

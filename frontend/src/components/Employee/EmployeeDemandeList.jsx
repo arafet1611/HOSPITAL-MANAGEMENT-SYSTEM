@@ -1,28 +1,30 @@
-import  { useState } from 'react';
-
+import { useState } from "react";
+import DemandeModelPopup from "./demandeModelPopup";
 const EmployeeDemandeList = () => {
   const demandesList = [
     "Demande de Congé",
     "Demande de Formation",
     "Demande de Permutation de Garde",
     "Demande de documents",
-    "Autres"
+    "Autres",
   ];
 
-  const [selectedDemande, setSelectedDemande] = useState(""); 
-
+  const [selectedDemande, setSelectedDemande] = useState("");
+  const [showDemandeModel, setShowDemandeModel] = useState(false);
   const handleDemandeChange = (event) => {
     setSelectedDemande(event.target.value);
   };
-
   const handleSendDemande = () => {
     console.log("Sending demande:", selectedDemande);
+    if (selectedDemande !== "") {
+      setShowDemandeModel(true);
+    }
   };
 
   return (
     <nav className="leftNav">
       <div
-        className="employeeDetail container my-5 p-3 bg-white shadow"
+        className="employeeDetail container"
         style={{
           margin: "1rem",
           marginTop: "4rem",
@@ -33,14 +35,32 @@ const EmployeeDemandeList = () => {
         }}
       >
         <p className="mb-2 text-secondary">demande personnelle</p>
-        <select  className="form-select" value={selectedDemande} onChange={handleDemandeChange}>
+        <select
+          className="form-select"
+          value={selectedDemande}
+          onChange={handleDemandeChange}
+        >
           <option value="">Sélectionnez une demande</option>
           {demandesList.map((demande, index) => (
-            <option key={index} value={demande}>{demande}</option>
+            <option key={index} value={demande}>
+              {demande}
+            </option>
           ))}
         </select>
-        <button className="btn btn-primary" onClick={handleSendDemande} disabled={!selectedDemande}>Envoyer la demande</button>
+        <button
+          className="btn btn-primary"
+          onClick={handleSendDemande}
+          disabled={!selectedDemande}
+        >
+          Envoyer la demande
+        </button>
       </div>
+      {showDemandeModel && (
+        <DemandeModelPopup
+          setShowDemandeModel={setShowDemandeModel}
+          selectedDemande={selectedDemande}
+        />
+      )}
     </nav>
   );
 };

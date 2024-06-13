@@ -1,14 +1,11 @@
-// documentDemandController.js
+import DocumentDemand from "../model/documentDemandeModel.js";
 
-import DocumentDemand from "./models/DocumentDemandModel";
-
-// Controller function to create a new document demand
 export const createDocumentDemand = async (req, res) => {
   try {
-    const { employee, documentType, notes } = req.body;
-
+    const { documentType, notes } = req.body;
+    const user = req.user._id;
     const newDocumentDemand = new DocumentDemand({
-      employee,
+      user,
       documentType,
       notes,
       demandeStatus: "pending",

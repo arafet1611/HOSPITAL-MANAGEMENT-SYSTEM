@@ -1,8 +1,6 @@
-// DocumentDemandModel.js
-
 import mongoose from "mongoose";
 
-const documentDemandSchema = new mongoose.Schema({
+const trainingDemandeSchema = new mongoose.Schema({
   employee: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Employee",
@@ -29,6 +27,9 @@ const documentDemandSchema = new mongoose.Schema({
   },
 });
 
-const DocumentDemand = mongoose.model("DocumentDemand", documentDemandSchema);
+const TrainingDemande = mongoose.model(
+  "TrainingDemande",
+  trainingDemandeSchema
+);
 
-export default DocumentDemand;
+export default TrainingDemande;

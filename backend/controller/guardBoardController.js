@@ -31,13 +31,17 @@ const updateNumberOfValues = async (modelName, columnUpdates) => {
 const getboardtableSchemabyService = async (req, res) => {
   try {
     const { serviceName } = req.params;
-
+    const { month } = req.query;
     if (!serviceName) {
       return res.status(400).json({ error: "Service name is required." });
     }
+    console.log("Service Name:", serviceName);
+    console.log("Month:", month);
+
     try {
       const serviceSchemaobj = await SchemaObjectModel.findOne({
         schemaName: serviceName,
+        month: month,
       });
 
       if (!serviceSchemaobj) {
@@ -59,13 +63,16 @@ const getboardtableSchemabyService = async (req, res) => {
 
 const createboardtableSchema = async (req, res) => {
   try {
-    const { schemaName, columns, service, NumberOfValueslist } = req.body;
+    const { schemaName, columns, service, NumberOfValueslist, month } =
+      req.body;
     const schemaFields = {};
+
     schemaFields["service"] = {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Service",
       default: service,
     };
+
     columns.forEach((column, index) => {
       const { columnName, columnType } = column;
 
@@ -95,35 +102,17 @@ const createboardtableSchema = async (req, res) => {
       }
     });
 
-    const dynamicSchema = new mongoose.Schema(schemaFields);
-    let DynamicModel = null;
-    if (!mongoose.connection.models[schemaName]) {
-      DynamicModel = mongoose.connection.models[schemaName];
-    } else {
-      DynamicModel = mongoose.connection.models[schemaName];
-    }
+    const schemaObjectEntry = new SchemaObjectModel({
+      schemaName: schemaName,
+      month,
+      schemaObject: schemaFields,
+    });
 
-    if (DynamicModel) {
-      res
-        .status(201)
-        .json({ message: `Schema "${schemaName}" created successfully` });
-
-      try {
-        const schemaObjectEntry = new SchemaObjectModel({
-          schemaName: schemaName,
-          schemaObject: serviceSchemaobj,
-        });
-
-        const savedEntry = await schemaObjectEntry.save();
-        console.log(
-          `Schema object for ${schemaName} saved successfully to database.`
-        );
-        return savedEntry;
-      } catch (error) {
-        console.error(`Error saving schema object to database: ${error}`);
-        throw error;
-      }
-    }
+    const savedEntry = await schemaObjectEntry.save();
+    res.status(201).json({
+      message: `Schema "${schemaName}" created and saved successfully to the database.`,
+      savedEntry,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to create schema" });

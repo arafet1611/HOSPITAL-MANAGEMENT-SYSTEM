@@ -1,12 +1,24 @@
 import EmployeeGuardBoard from "../model/employeeGuardBoardModel.js";
 import Employee from "../model/employeeModel.js";
-export const upsertGuardingDates = async (req, res) => {
-  try {
-    const { AssistantList, SeniorList, InterneList, serviceId, month, method } =
-      req.body;
+import Notification from "../model/NotificationModel.js";
+import { initSocketIO } from "../configs/socketHandler.js";
 
+export const upsertGuardingDates = async (req, res) => {
+  const user = req.user;
+  try {
+    const {
+      AssistantList,
+      SeniorList,
+      InterneList,
+      serviceId,
+      month,
+      method,
+      userId,
+    } = req.body;
+
+    let updatedResults = [];
     if (method === "PUT") {
-      const handleList = async (list) => {
+      const handleList = async (list, role, job) => {
         let updatedEmployeeGuardBoardList = [];
         for (const employee of list) {
           const [firstName, ...lastNameParts] = employee.name.split(" ");
@@ -28,43 +40,61 @@ export const upsertGuardingDates = async (req, res) => {
             updatedEmployeeGuardBoardList.push(updatedEmployeeGuardBoard);
           }
         }
+
+        const notification = new Notification({
+          serviceId,
+          role,
+          job,
+          message: `Guarding dates updated for ${role} and ${job}`,
+        });
+        await notification.save();
+        const io = initSocketIO();
+
+        io.emit("guardingDatesUpdated", {
+          message: `Guarding dates updated for ${role} and ${job}`,
+          serviceId,
+          role,
+          job,
+        });
+
         return updatedEmployeeGuardBoardList;
       };
 
       const updatedEmployeeGuardBoardAssitantList = await handleList(
-        AssistantList
+        AssistantList,
+        "Assistant",
+        user.job
       );
-      const updatedEmployeeGuardBoardSeniorList = await handleList(SeniorList);
+      const updatedEmployeeGuardBoardSeniorList = await handleList(
+        SeniorList,
+        "Senior",
+        user.job
+      );
       const updatedEmployeeGuardBoardInterneList = await handleList(
-        InterneList
+        InterneList,
+        "Intern",
+        user.job
       );
 
-      const updatedResults = [
+      updatedResults = [
         ...updatedEmployeeGuardBoardAssitantList,
         ...updatedEmployeeGuardBoardSeniorList,
         ...updatedEmployeeGuardBoardInterneList,
       ];
-
-      res.json(updatedResults);
     } else if (method === "POST") {
-      const handleCreateList = async (list) => {
+      const handleCreateList = async (list, role, job) => {
         let employeeGuardBoardList = [];
         for (const employee of list) {
           const [firstName, ...lastNameParts] = employee.name.split(" ");
           const lastName = lastNameParts.join(" ");
-          const employeeObjectList = await Employee.find();
-          let employeeId;
-          for (const employee of employeeObjectList) {
-            if (
-              employee.firstname === firstName &&
-              employee.lastname === lastName
-            ) {
-              employeeId = employee._id;
-            }
-          }
-          if (!employeeId) continue;
+          const employeeObject = await Employee.findOne({
+            firstName,
+            lastName,
+          });
+          if (!employeeObject) continue;
+
           const newEmployeeGuardBoard = new EmployeeGuardBoard({
-            employee: employeeId,
+            employee: employeeObject._id,
             service: serviceId,
             guardingMonth: month,
             guardingDates: employee.guardingDates,
@@ -75,23 +105,47 @@ export const upsertGuardingDates = async (req, res) => {
             employeeGuardBoardList.push(employeeGuardBoard);
           }
         }
+
+        const notification = new Notification({
+          serviceId,
+          role,
+          message: `Guarding dates updated for ${role}`,
+        });
+        await notification.save();
+
+        io.emit("guardingDatesUpdated", {
+          message: `Guarding dates updated for ${role}`,
+          serviceId,
+          role,
+        });
+
         return employeeGuardBoardList;
       };
 
       const employeeGuardBoardAssitantList = await handleCreateList(
-        AssistantList
+        AssistantList,
+        "Assistant",
+        user.job
       );
-      const employeeGuardBoardSeniorList = await handleCreateList(SeniorList);
-      const employeeGuardBoardInterneList = await handleCreateList(InterneList);
+      const employeeGuardBoardSeniorList = await handleCreateList(
+        SeniorList,
+        "Senior",
+        user.job
+      );
+      const employeeGuardBoardInterneList = await handleCreateList(
+        InterneList,
+        "Intern",
+        user.job
+      );
 
-      const Results = [
+      updatedResults = [
         ...employeeGuardBoardAssitantList,
         ...employeeGuardBoardSeniorList,
         ...employeeGuardBoardInterneList,
       ];
-
-      res.json(Results);
     }
+
+    res.json(updatedResults);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -126,6 +180,57 @@ export const isServiceAndMonthSaved = async (req, res) => {
         .status(404)
         .json({ message: "Service and month combination not found" });
     }
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+export const getAllGuardingDatesByEmployeeIdAndYear = async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+    const { year } = req.query;
+    if (!employeeId || !year) {
+      return res
+        .status(400)
+        .json({ message: "Employee ID and year are required." });
+    }
+
+    const months = [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+    ];
+    const guardingMonths = months.map((month) => `${month}/${year}`);
+
+    const guardBoardEntries = await EmployeeGuardBoard.find({
+      employee: employeeId,
+      guardingMonth: { $in: guardingMonths },
+    });
+
+    const matchingGuardingDates = [];
+    guardBoardEntries.forEach((entry) => {
+      entry.guardingDates.forEach((date) => {
+        const [day, month, yearString] = date.split("/");
+        if (parseInt(yearString, 10) === parseInt(year, 10)) {
+          matchingGuardingDates.push(date);
+        }
+      });
+    });
+
+    if (matchingGuardingDates.length === 0) {
+      return res.json([]);
+    }
+    console.log("matchingGuardingDates " + matchingGuardingDates);
+
+    res.json(matchingGuardingDates);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

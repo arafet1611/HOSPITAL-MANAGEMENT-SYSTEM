@@ -3,9 +3,11 @@ import Service from "../model/serviceModel.js";
 const createService = async (req, res) => {
   try {
     const { title, content, category } = req.body;
+    const { filename } = req.file;
 
     const newService = new Service({
       title,
+      image: filename,
       content,
       category,
     });
@@ -41,11 +43,13 @@ const getService = async (req, res) => {
 const updateService = async (req, res) => {
   try {
     const { title, content, category } = req.body;
-    
+    const { filename } = req.file;
+
     const service = await Service.findByIdAndUpdate(
       req.params.id,
       {
         title,
+        image: filename,
         content,
         category,
       },

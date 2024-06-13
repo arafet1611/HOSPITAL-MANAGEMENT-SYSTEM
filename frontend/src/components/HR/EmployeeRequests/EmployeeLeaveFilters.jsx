@@ -1,12 +1,13 @@
-import  { useState } from "react";
+import { useState } from "react";
 
 function EmployeeLeaveFilters({ onFilter }) {
   const [service, setService] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [status, setStatus] = useState("");
 
   const handleSubmit = () => {
-    onFilter({ service, fromDate, toDate });
+    onFilter({ service, fromDate, toDate, status });
   };
 
   return (
@@ -14,13 +15,22 @@ function EmployeeLeaveFilters({ onFilter }) {
       <div className="card-body p-3">
         <div className="row align-items-center">
           {/* All Request Dropdown */}
-          <div className="col-sm-4 my-1">
+           {/* Status Dropdown */}
+           <div className="col-sm-4 my-1">
             <div className="input-group">
               <div className="input-group-prepend">
-                <div className="input-group-text">All Requests</div>
+                <div className="input-group-text">Status</div>
               </div>
-              <select className="form-select" aria-label="All Request Dropdown">
-                <option selected>...</option>
+              <select
+                className="form-select"
+                aria-label="Status Dropdown"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <option value="">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Accepted">Accepted</option>
+                <option value="Rejected">Rejected</option>
               </select>
             </div>
           </div>
@@ -54,6 +64,8 @@ function EmployeeLeaveFilters({ onFilter }) {
               />
             </div>
           </div>
+
+        
         </div>
 
         {/* Service and Specialiter Dropdowns */}
@@ -70,10 +82,9 @@ function EmployeeLeaveFilters({ onFilter }) {
                 value={service}
                 onChange={(e) => setService(e.target.value)}
               >
-                <option selected>All</option>
-
-                <option>Chirurgie générale</option>
-                <option>Médecine Interne</option>
+                <option value="">All</option>
+                <option value="Chirurgie générale">Chirurgie générale</option>
+                <option value="Médecine Interne">Médecine Interne</option>
               </select>
             </div>
           </div>

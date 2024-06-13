@@ -1,53 +1,74 @@
-import { useState, useRef, useEffect } from "react";
+import  { useState, useRef, useEffect } from "react";
 import "../../HR/EmployeeManagement/EmployeeModelPopup.css";
-import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
 import { setNavbarSticky } from "../../../redux/navbar/NavbarSlice";
-import { IoCloudUpload } from "react-icons/io5";
-import axios from "axios"
+import { toast, Toaster } from "react-hot-toast";
 
+import axios from "axios";
 
-const ModelPopup = ({ setShowModal, category }) => {
+const ModelPopup = ({ setShowModal, category , updateServiceList }) => {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const modalContainerRef = useRef(null);
+  const [formData, setFormData] = useState(new FormData());
+  const [selectedFile, setSelectedFile] = useState(null);
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    const allowedTypes = ["image/jpeg", "image/png"];
+    const maxSizeMB = 5;
+
+    if (file && allowedTypes.includes(file.type) && file.size <= maxSizeMB * 1024 * 1024) {
+      setSelectedFile(file);
+    } else {
+      setSelectedFile(null);
+      toast.error("File must be a JPG or PNG format and should not exceed 5 MB.");
+    }
+  };
 
   const dispatch = useDispatch();
 
   const handleDropdownClose = () => {
     dispatch(setNavbarSticky(true));
   };
-  const createService  = async (values) => {
+
+  const createService = async () => {
     setLoading(true);
     try {
-       await axios.post('http://localhost:5000/api/services', values);
-      
+      const config = {
+        headers: {
+          "content-type": "multipart/form-data",
+        },
+      };
+  
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.get("title"));
+      formDataToSend.append("content", formData.get("content"));
+      formDataToSend.append("category", category);
+      formDataToSend.append("image", selectedFile);
+  
+      const response = await axios.post("http://localhost:5000/api/services", formDataToSend, config);
+      toast.success("service" + formData.get("title") + "created successfully");
       setLoading(false);
       setShowModal(false);
+      updateServiceList(response.data); 
+
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      setError("Failed to save service.");
+      setLoading(false);
     }
   };
+  const handleChange = (e) => {
+    const value = e.target.type === 'file' ? e.target.files[0] : e.target.value;
+    formData.set(e.target.name, value);
+  };
 
-  const formik = useFormik({
-    initialValues: {
-      category: category,
-      title: "",
-      image: "",
-      endDate: "",
-      content: "",
-    },
-   
-    onSubmit: (values) => {
-      createService(values);
-      handleDropdownClose();
-    },
-  });
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (
         modalContainerRef.current &&
-        !modalContainerRef.current.contains(event.target) &&
-        event.target.tagName.toLowerCase() !== "input"
+       !modalContainerRef.current.contains(event.target) &&
+        event.target.tagName.toLowerCase()!== "input"
       ) {
         setShowModal(false);
         handleDropdownClose();
@@ -61,9 +82,16 @@ const ModelPopup = ({ setShowModal, category }) => {
     };
   }, [setShowModal]);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    createService();
+    handleDropdownClose();
+  };
+
   return (
     <div className="modalContainer">
-      <form action="" onSubmit={formik.handleSubmit}>
+      <Toaster />
+      <form action="" onSubmit={handleSubmit}>
         <div className="modalBox" ref={modalContainerRef}>
           <div className="modalHeader">
             <h2>Ajouter Service</h2>
@@ -76,51 +104,34 @@ const ModelPopup = ({ setShowModal, category }) => {
                   type="text"
                   id="category"
                   name="category"
-                  onChange={formik.handleChange}
-                  value={"Category " + formik.values.category}
+                  onChange={handleChange}
+                  value={category}
                   disabled
+                  aria-label="Category"
                 />
               </div>
             </div>
-            <div className="input-box">
-              <label htmlFor="image">Image</label>
-              <div className="form-group">
-                <div
-                  className="d-flex align-items-center justify-content-center bg-secondary rounded cursor-pointer"
-                  style={{ height: "200px", width: "60%"}}
-                >
-                  {formik.image ? (
-                    <img
-                      src={formik.image}
-                      className="img-fluid"
-                      alt="Uploaded Image"
-                      style={{ maxHeight: "100%" }}
-                    />
-                  ) : (
-                    <span className="display-1 text-light">
-                      <IoCloudUpload />
-                    </span>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id="image"
-                    onChange={(event) => {
-                      formik.setFieldValue("image", event.currentTarget.files[0]);}}
-                    className="position-absolute invisible"
-                  />
-                </div>
-              </div>
-            </div>
+
             <div className="input-box">
               <label htmlFor="title">Title</label>
               <input
                 type="text"
                 id="title"
                 name="title"
-                onChange={formik.handleChange}
-                value={formik.values.title}
+                onChange={handleChange}
+                value={formData.get('title')}
                 required
+              />
+            </div>
+            <div className="input-box">
+              <label htmlFor="formFile" className="form-label"></label>
+              <input
+                className="form-control"
+                onChange={handleFileChange}
+                accept="image/*"
+                type="file"
+                id="formFile"
+                name="image"
               />
             </div>
             <div className="input-box">
@@ -130,15 +141,16 @@ const ModelPopup = ({ setShowModal, category }) => {
                 name="content"
                 className="form-control"
                 style={{ minHeight: "200px" }}
-                onChange={formik.handleChange}
-                value={formik.values.content}
+                onChange={handleChange}
+                value={formData.get('content')}
                 required
               />
             </div>
             <div className="modalFooter">
-              <button className="btn btn-primary" type="submit">
-                {loading ? "Saving..." : "Save"}
+              <button className="btn btn-primary" type="submit" disabled={loading}>
+                {loading? "Saving..." : "Save"}
               </button>
+              {error && <p className="error">{error}</p>}
             </div>
           </div>
         </div>

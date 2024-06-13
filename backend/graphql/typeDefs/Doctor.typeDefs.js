@@ -1,6 +1,8 @@
 import { gql } from "apollo-server-express";
 
 const DoctorTypeDefs = gql`
+  scalar ServiceId
+
   type Doctor {
     id: ID!
     employee: Employee!
@@ -9,6 +11,7 @@ const DoctorTypeDefs = gql`
     responsabilite: String
   }
   type Query {
+    doctorsByService(ServiceId: ServiceId!): [Doctor]
     doctor(ID: ID!): Doctor
     doctors: [Doctor]
   }

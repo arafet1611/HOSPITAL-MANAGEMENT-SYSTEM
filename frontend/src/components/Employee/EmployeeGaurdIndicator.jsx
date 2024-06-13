@@ -13,11 +13,12 @@ const EmployeeGaurdIndicator = () => {
     const year = today.getFullYear();
     return `${day}/${month}/${year}`;
   };
-
+  const userString = localStorage.getItem("userInfo");
+  const user = JSON.parse(userString);
   useEffect(() => {
     setTodayDate(getTodayDateString());
-    setEmployeeId("663903afe32c5abefc4b2ef3");
-  }, []);
+    setEmployeeId(user._id);
+  }, [user]);
 
   useEffect(() => {
     const fetchGuardingDates = async () => {
@@ -26,8 +27,7 @@ const EmployeeGaurdIndicator = () => {
           `http://localhost:5000/api/employeeGaurdboard/${employeeId}?todayDate=${todayDate}`
         );
         console.log(response.data);
-        // Assuming the response contains date strings in the format "mm/dd/yyyy"
-        // Convert the date strings to "dd/mm/yyyy" format
+
         const formattedDates = response.data.map((dateString) => {
           const [month, day, year] = dateString.split("/");
           return `${day}/${month}/${year}`;
@@ -61,7 +61,7 @@ const EmployeeGaurdIndicator = () => {
                 type="String"
                 id={`form${index}`}
                 className="form-control bg-light"
-                value={date} // Date format should be "yyyy-mm-dd" for input type="date"
+                value={date} 
                 readOnly
               />
               <label htmlFor={`form${index}`}> Date de garde</label>

@@ -28,7 +28,7 @@ function EmployeeManagement() {
   };
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid bg-light">
       <div className="row">
         {employeeId ? (
           <>

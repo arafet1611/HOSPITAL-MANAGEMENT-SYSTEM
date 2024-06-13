@@ -1,16 +1,15 @@
-
-import TrainingDemande from "./models/TrainingDemandeModel";
+import TrainingDemande from "../model/trainingDemandeModel.js";
 
 export const createTrainingDemand = async (req, res) => {
   try {
-    const { employee, TrainingType, notes, includedFile } = req.body;
-
+    const { TrainingType, notes, includedFile } = req.body;
+    const user = req.user._id;
     const newTrainingDemand = new TrainingDemande({
-      employee,
+      user,
       TrainingType,
       notes,
       includedFile,
-      demandeStatus: "pending", 
+      demandeStatus: "pending",
     });
 
     const savedTrainingDemand = await newTrainingDemand.save();

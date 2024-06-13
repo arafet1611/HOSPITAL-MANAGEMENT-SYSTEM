@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import generateToken from "../utils/generateToken.js";
 import Admin from "../model/adminModel.js";
+
 const authAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -16,7 +17,8 @@ const authAdmin = async (req, res) => {
         res.status(201).json({
           _id: admin._id,
           email: admin.email,
-          isAdmin: admin.isAdmin,
+          job: admin.isAdmin,
+          admin: "",
           token: generateToken(admin._id),
         });
       } else {

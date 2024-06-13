@@ -15,4 +15,20 @@ const GET_DOCTORS = gql`
   }
 `;
 
-export { GET_DOCTORS };
+const GET_DOCTORS_BY_SERVICE = gql`
+  query GetDoctorsByService($ServiceId: ServiceId!) {
+    doctorsByService(ServiceId: $ServiceId) {
+      employee {
+        id
+        firstname
+        lastname
+        service
+      }
+      Type
+      categorie
+      responsabilite
+    }
+  }
+`;
+
+export { GET_DOCTORS, GET_DOCTORS_BY_SERVICE };

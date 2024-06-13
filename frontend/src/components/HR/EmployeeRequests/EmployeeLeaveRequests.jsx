@@ -1,163 +1,79 @@
-import file1 from "../../../assets/doc.txt";
-import  { useState, useEffect } from "react";
-import img1 from "../../../assets/img/maleDoctor.png";
-import img2 from "../../../assets/img/femaleDoctor.png";
+import { useState, useEffect } from "react";
+import maleDoctor from "../../../assets/img/maleDoctor.png";
+import femaleDoctor from "../../../assets/img/femaleDoctor.png";
 import Pagination from "../../Pagination";
+import axios from "axios";
+import { AiFillFileUnknown } from "react-icons/ai";
+
 function EmployeeLeaveRequests({ filters }) {
-  const leaveRequests = [
-    {
-      employee: {
-        name: "Sean Black",
-        profileImg: img1,
-        profileLink: "profile.html",
-        Specialite: "medecin",
-        service: "Chirurgie générale",
-      },
-      leaveType: "Parental Leave",
-      from: "05/12/2019",
-      to: "07/12/2019",
-      days: 3,
-      remainingDays: 9,
-      notes: "Parenting Leave",
-      status: "Pending",
-    },
-    {
-      employee: {
-        name: "Linda Craver",
-        profileImg: img2,
-        profileLink: "profile.html",
-        Specialite: "infermiere",
-        service: "Médecine Interne",
-      },
-      leaveType: "Parental Leave",
-      from: "05/12/2019",
-      to: "08/12/2019",
-      days: 3,
-      remainingDays: 9,
-      notes: "Going to Hospital",
-      status: "rejected",
-    },
-    {
-      employee: {
-        name: "Linda Craver",
-        profileImg: img2,
-        profileLink: "profile.html",
-        Specialite: "infermiere",
-        service: "Médecine Interne",
-      },
-      leaveType: "Parental Leave",
-      from: "05/12/2019",
-      to: "08/12/2019",
-      days: 3,
-      remainingDays: 9,
-      notes: "Going to Hospital",
-      status: "rejected",
-    },
-    {
-      employee: {
-        name: "Linda Craver",
-        profileImg: img2,
-        profileLink: "profile.html",
-        Specialite: "infermiere",
-        service: "Médecine Interne",
-      },
-      leaveType: "Parental Leave",
-      from: "05/12/2019",
-      to: "08/12/2019",
-      days: 3,
-      remainingDays: 9,
-      notes: "Going to Hospital",
-      status: "rejected",
-    },
-    {
-      employee: {
-        name: "Linda Craver",
-        profileImg: img2,
-        profileLink: "profile.html",
-        Specialite: "infermiere",
-        service: "Médecine Interne",
-      },
-      leaveType: "Parental Leave",
-      from: "05/12/2019",
-      to: "08/12/2019",
-      days: 3,
-      remainingDays: 9,
-      notes: "Going to Hospital",
-      status: "rejected",
-    },
-    {
-      employee: {
-        name: "Linda Craver",
-        profileImg: img2,
-        profileLink: "profile.html",
-        Specialite: "infermiere",
-        service: "Médecine Interne",
-      },
-      leaveType: "Parental Leave",
-      from: "05/12/2019",
-      to: "08/12/2019",
-      days: 3,
-      remainingDays: 9,
-      notes: "Going to Hospital",
-      status: "rejected",
-    },
-  ];
-  function getStatusClass(status) {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "text-warning";
-      case "rejected":
-        return "text-danger";
-      case "accepted":
-        return "text-sucess";
-      default:
-        return "";
-    }
-  }
+  const [leaveRequests, setLeaveRequests] = useState([]);
   const [fileContent, setFileContent] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredLeaveRequests, setFilteredLeaveRequests] = useState([]);
   const [rowsToShow, setRowsToShow] = useState(5);
-  const { service, fromDate, toDate } = filters;
+  const { service, fromDate, toDate, status } = filters;
 
-  // <filtrage>
   useEffect(() => {
-    if (service || fromDate || toDate) {
+    const fetchLeaveRequests = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/demandeLeave"
+        );
+        console.log(response.data);
+        setLeaveRequests(response.data);
+      } catch (error) {
+        console.error("Error fetching leave requests:", error);
+      }
+    };
+
+    fetchLeaveRequests();
+  }, []);
+
+  useEffect(() => {
+    if (service || fromDate || toDate || status) {
       const filtered = leaveRequests.filter((request) => {
-        const nameMatches = request.employee.name
+        const nameMatches = request.employee.firstname
           .toLowerCase()
           .includes(searchQuery.toLowerCase());
-        const serviceMatches = !service || request.employee.service === service;
+        const serviceMatches =
+          !service || request.employee.service.title === service;
 
         let fromDateMatches = true;
         let toDateMatches = true;
+        const statusMatches =
+          !status || request.demandeStatus.toLowerCase() === status.toLowerCase();
 
         if (fromDate) {
           const fromDateFilter = new Date(fromDate);
-          const requestFromDate = parseDate(request.from);
+          const requestFromDate = parseDate(request.startDate);
           fromDateMatches = requestFromDate >= fromDateFilter;
         }
 
         if (toDate) {
           const toDateFilter = new Date(toDate);
-          const requestToDate = parseDate(request.to);
+          const requestToDate = parseDate(request.endDate);
           toDateMatches = requestToDate <= toDateFilter;
         }
 
         return (
-          nameMatches && serviceMatches && fromDateMatches && toDateMatches
+          nameMatches &&
+          serviceMatches &&
+          fromDateMatches &&
+          toDateMatches &&
+          statusMatches
         );
       });
 
       setFilteredLeaveRequests(filtered.slice(0, rowsToShow));
     } else {
-      // Si aucune valeur de filtre n'est définie, appliquer le filtre par nom uniquement
       const filtered = leaveRequests.filter((request) =>
-        request.employee.name.toLowerCase().includes(searchQuery.toLowerCase())
+        request.employee.firstname
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
       );
       setFilteredLeaveRequests(filtered.slice(0, rowsToShow));
     }
-  }, [leaveRequests, searchQuery, rowsToShow, service, fromDate, toDate]);
+  }, [leaveRequests, searchQuery, rowsToShow, service, fromDate, toDate, status]);
 
   const parseDate = (dateString) => {
     const parts = dateString.split("/");
@@ -167,10 +83,11 @@ function EmployeeLeaveRequests({ filters }) {
   const handleRowsChange = (event) => {
     setRowsToShow(parseInt(event.target.value, 10));
   };
+
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
-  // <filtrage/>
+
   const readDocument = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -194,10 +111,9 @@ function EmployeeLeaveRequests({ filters }) {
     });
   };
 
-  const downloadFile = () => {
-    // Create a link element
+  const downloadFile = (fileUrl) => {
     const link = document.createElement("a");
-    link.href = file1;
+    link.href = fileUrl;
     link.download = "file.txt";
 
     document.body.appendChild(link);
@@ -205,19 +121,20 @@ function EmployeeLeaveRequests({ filters }) {
     document.body.removeChild(link);
   };
 
-  const handleButtonClick = async () => {
+  const handleButtonClick = async (fileUrl) => {
     try {
-      downloadFile();
+      downloadFile(fileUrl);
 
       setTimeout(async () => {
-        const result = await readDocument(file1);
+        const response = await axios.get(fileUrl, { responseType: "blob" });
+        const result = await readDocument(response.data);
         setFileContent(result);
-      }, 1000); // Adjust the delay if needed
+      }, 1000); 
     } catch (error) {
       console.error("Erreur de lecture du fichier :", error);
     }
   };
-  //<pagination>
+
   const itemsPerPage = 3;
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -234,9 +151,21 @@ function EmployeeLeaveRequests({ filters }) {
     setCurrentPage(pageNumber);
   };
 
-  //<pagination/>
-  const renderFileIcon = () => {
-    const fileExtension = file1.split(".").pop().toLowerCase();
+  const getStatusClass = (status) => {
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "text-warning";
+      case "rejected":
+        return "text-danger";
+      case "accepted":
+        return "text-success";
+      default:
+        return "";
+    }
+  };
+
+  const renderFileIcon = (fileUrl) => {
+    const fileExtension = fileUrl.split(".").pop().toLowerCase();
 
     switch (fileExtension) {
       case "pdf":
@@ -247,9 +176,43 @@ function EmployeeLeaveRequests({ filters }) {
       case "txt":
         return <i className="bi bi-file-earmark-font-fill text-dark fs-3"></i>;
       default:
-        return null; // No specific icon for other file types
+        return <AiFillFileUnknown className="text-dark fs-3" />;
     }
   };
+
+  const handleStatusChange = (requestId, newStatus , userId , startDate , endDate , serviceId) => {
+    if (
+      window.confirm(
+        `Are you sure you want to change the status to be ${newStatus}?`
+      )
+    ) {
+      console.log(requestId);
+      axios
+        .put(`http://localhost:5000/api/demandeLeave/${requestId}`, {
+          userId,
+          startDate,
+          endDate,
+          demandeStatus: newStatus,
+          serviceId
+        })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      const updatedRequests = leaveRequests.map((request) => {
+        if (request.id === requestId) {
+          return { ...request, demandeStatus: newStatus };
+        } else {
+          return request;
+        }
+      });
+      setLeaveRequests(updatedRequests);
+    }
+  };
+
   return (
     <>
       <style>{styles}</style>
@@ -334,12 +297,12 @@ function EmployeeLeaveRequests({ filters }) {
                 <table className="table custom-table no-footer">
                   <thead className="bg-light text-info">
                     <tr>
-                      <th>Employee</th>
+                      <th>#</th>
+                      <th>Employee Name</th>
                       <th>Leave Type</th>
                       <th>Leave Period Requested From</th>
                       <th>To</th>
                       <th>No of Days</th>
-                      <th>Remaining Days</th>
                       <th>Notes</th>
                       <th>Included File</th>
                       <th>Leave Status</th>
@@ -349,33 +312,122 @@ function EmployeeLeaveRequests({ filters }) {
                     {currentRequests.map((request, index) => (
                       <tr key={index}>
                         <td>
-                          <div className="table-img">
-                            <a href={request.employee.profileLink}>
-                              <img
-                                src={request.employee.profileImg}
-                                alt="profile"
-                                className="img-table img-fluid rounded-circle"
-                                style={{ maxWidth: "10%" }}
-                              />
-                            </a>
-                            <label>{request.employee.name}</label>
-                          </div>
+                          {request.employee.image ? (
+                            <img
+                              src={`http://localhost:5000/uploads/${request.employee.image}`}
+                              alt="profile"
+                              className=" img-fluid rounded-circle"
+                              style={{ maxWidth: "40px" }}
+                            />
+                          ) : (
+                            <img
+                              src={
+                                request.employee.sex === "male"
+                                  ? maleDoctor
+                                  : femaleDoctor
+                              }
+                              alt="profile"
+                              className=" img-fluid rounded-circle"
+                              style={{ maxWidth: "40px" }}
+                            />
+                          )}
+                        </td>
+                        <td>
+                          {" "}
+                          {request.employee.firstname}{" "}
+                          {request.employee.lastname}
                         </td>
                         <td>{request.leaveType}</td>
-                        <td>{request.from}</td>
-                        <td>{request.to}</td>
-                        <td>{request.days}</td>
-                        <td>{request.remainingDays}</td>
+                        <td>{request.startDate.toString().substring(0, 10)}</td>
+                        <td>{request.endDate.toString().substring(0, 10)}</td>
+                        <td>{request.numberOfDays}</td>
                         <td>{request.notes}</td>
                         <td>
-                          <span type="button" onClick={handleButtonClick}>
-                            {renderFileIcon()}
+                          <span
+                            type="button"
+                            onClick={() =>
+                              handleButtonClick(
+                                `http://localhost:5173/uploads/${request.fileUrl}`
+                              )
+                            }
+                          >
+                            {renderFileIcon(
+                              `http://localhost:5173/uploads/${request.fileUrl}`
+                            )}
                           </span>
                         </td>
                         <td>
-                          <a className={getStatusClass(request.status)}>
-                            {request.status}
-                          </a>
+                          <div className="dropdown">
+                            <button
+                              className={
+                                request.demandeStatus === "Accepted" ||
+                                request.demandeStatus === "Rejected"
+                                  ? `btn  ${getStatusClass(
+                                      request.demandeStatus
+                                    )}`
+                                  : `btn dropdown-toggle ${getStatusClass(
+                                      request.demandeStatus,
+                                    )}`
+                              }
+                              type="button"
+                              id="dropdownMenuButton"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                              disabled={
+                                request.demandeStatus === "Accepted" ||
+                                request.demandeStatus === "Rejected"
+                              }
+                            >
+                              {request.demandeStatus}
+                            </button>
+                            <ul
+                              className="dropdown-menu"
+                              aria-labelledby="dropdownMenuButton"
+                            >
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() =>
+                                    handleStatusChange(request._id,
+                                       "Accepted" ,
+                                       request.employee._id,
+                                       request.startDate,
+                                       request.endDate,
+                                       request.employee.service
+
+
+                                     )
+                                  }
+                                  disabled={
+                                    request.demandeStatus === "Accepted" ||
+                                    request.demandeStatus === "Rejected"
+                                  }
+                                >
+                                  Accepter
+                                </button>
+                              </li>
+                              <li>
+                                <button
+                                  className="dropdown-item"
+                                  onClick={() =>
+                                    handleStatusChange(request._id,
+                                       "Rejected",
+                                       request.employee._id,
+                                       request.startDate,
+                                       request.endDate,
+                                       request.employee.service
+                                      )
+                                  }
+                                  disabled={
+                                    request.demandeStatus === "Accepted" ||
+                                    request.demandeStatus === "Rejected"
+                                  }
+                                >
+                                  Rejeter
+                                </button>
+                              </li>
+                            </ul>
+                          </div>
                         </td>
                       </tr>
                     ))}
