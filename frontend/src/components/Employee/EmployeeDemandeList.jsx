@@ -5,8 +5,6 @@ const EmployeeDemandeList = () => {
     "Demande de Congé",
     "Demande de Formation",
     "Demande de Permutation de Garde",
-    "Demande de documents",
-    "Autres",
   ];
 
   const [selectedDemande, setSelectedDemande] = useState("");
@@ -22,7 +20,7 @@ const EmployeeDemandeList = () => {
   };
 
   return (
-    <nav className="leftNav">
+    <nav className="leftNav ">
       <div
         className="employeeDetail container"
         style={{
@@ -34,7 +32,7 @@ const EmployeeDemandeList = () => {
           gap: "20px",
         }}
       >
-        <p className="mb-2 text-secondary">demande personnelle</p>
+        <p className="mb-2 text-secondary">DEMANDES</p>
         <select
           className="form-select"
           value={selectedDemande}

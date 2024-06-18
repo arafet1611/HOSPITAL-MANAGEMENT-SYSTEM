@@ -20,10 +20,14 @@ import ServiceRosters from "./pages/ServiceRosters";
 import ForgetPassword from "./pages/ForgetPassword";
 import Notifications from "./pages/Notifications";
 import PrimeManagement from "./pages/PrimeManagement";
-import PrimeAmountListing from "./components/HR/PrimeManagement/PrimeAmountListing" ;
+import PrimeAmountListing from "./components/HR/PrimeManagement/PrimeAmountListing";
 import Sidebar from "./components/Sidebar";
-import Dashboard from './pages/Dashboard';
+import Dashboard from "./pages/Dashboard";
 import TableModelList from "./components/Secretary/GuardTable/TableModelList";
+import EmployeeGaurdTable from "./components/Employee/EmployeeGaurdTable";
+import EmployeeDemandeTable from "./components/Employee/EmployeeDemandeTable";
+import PrivateRoute from "./PrivateRoute"; // Import the PrivateRoute component
+import PublicRoute from "./PublicRoute";
 function App() {
   return (
     <>
@@ -33,38 +37,177 @@ function App() {
           <Navbar />
           <Sidebar />
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/hr/dashboard" element={<Dashboard />} />
-            <Route path="/admin/dashboard" element={<Dashboard />} />
-            <Route path="/secretary/dashboard" element={<Dashboard />} />
-            <Route path="/employee/dashboard" element={<Dashboard />} />
+            <Route
+              path="/"
+              element={
+                <PublicRoute>
+                  <Home />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/forget-password"
+              element={
+                <PublicRoute>
+                  <ForgetPassword />
+                </PublicRoute>
+              }
+            />
+            <Route path="/my-profile" element={<EmployeeProfile />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route
+              path="/employee/table-view"
+              element={<EmployeeGaurdTable />}
+            />
+            <Route
+              path="/employee/demande-list"
+              element={<EmployeeDemandeTable />}
+            />
 
-            <Route path="/login" element={<Login />} />
-             <Route
+            <Route
+              path="/hr/dashboard"
+              element={
+                <PrivateRoute allowedRoles={["hr"]}>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <PrivateRoute allowedRoles={["admin"]}>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/secretary/dashboard"
+              element={
+                <PrivateRoute allowedRoles={["secretary"]}>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/employee/dashboard"
+              element={
+                <PrivateRoute allowedRoles={["doctor"]}>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/hr/employees-management"
-              element={<EmployeeManagement />}
-            /> 
+              element={
+                <PrivateRoute allowedRoles={["hr"]}>
+                  <EmployeeManagement />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/hr/employees-management-history"
-              element={<EmployeeManagementHistory />}
+              element={
+                <PrivateRoute allowedRoles={["hr"]}>
+                  <EmployeeManagementHistory />
+                </PrivateRoute>
+              }
             />
             <Route
               path="/hr/employees-request-management"
-              element={<EmployeeRequestMangement />}
+              element={
+                <PrivateRoute allowedRoles={["hr"]}>
+                  <EmployeeRequestMangement />
+                </PrivateRoute>
+              }
             />
-            <Route path="/forget-password" element={<ForgetPassword />} />
-            <Route path="/my-profile" element={<EmployeeProfile />} />
-            <Route path="/admin/service-management" element={<ServiceManagement />} />
-            <Route path="/secretary/model-creation/" element={<ColumnCreation />} />
-            <Route path="/secretary/table-entry/:serviceName" element={<TableEntry />} />
-            <Route path="/secretary/table-view" element={<TableView />} />
-            <Route path="/secretary/table-modify/:serviceName" element={<TableModify />} />
-            <Route path="/secretary/table-model-list" element={<TableModelList />} />
-            <Route path="/admin/vacation-management" element={<VacationManagement />}/>
-            <Route path="/hr/service-rosters" element={<ServiceRosters />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/hr/prime-management" element={<PrimeManagement />} />
-            <Route path="/hr/prime-management/prime-list" element={<PrimeAmountListing />} />
+            <Route
+              path="/admin/service-management"
+              element={
+                <PrivateRoute allowedRoles={["admin"]}>
+                  <ServiceManagement />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/secretary/model-creation"
+              element={
+                <PrivateRoute allowedRoles={["secretary"]}>
+                  <ColumnCreation />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/secretary/table-entry"
+              element={
+                <PrivateRoute allowedRoles={["secretary"]}>
+                  <TableEntry />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/secretary/table-view"
+              element={
+                <PrivateRoute allowedRoles={["secretary"]}>
+                  <TableView />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/secretary/table-modify"
+              element={
+                <PrivateRoute allowedRoles={["secretary"]}>
+                  <TableModify />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/secretary/table-model-list"
+              element={
+                <PrivateRoute allowedRoles={["secretary"]}>
+                  <TableModelList />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/hr/vacation-management"
+              element={
+                <PrivateRoute allowedRoles={["hr"]}>
+                  <VacationManagement />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/hr/service-rosters"
+              element={
+                <PrivateRoute allowedRoles={["hr"]}>
+                  <ServiceRosters />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/hr/prime-management"
+              element={
+                <PrivateRoute allowedRoles={["hr"]}>
+                  <PrimeManagement />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/hr/prime-management/prime-list"
+              element={
+                <PrivateRoute allowedRoles={["hr"]}>
+                  <PrimeAmountListing />
+                </PrivateRoute>
+              }
+            />
           </Routes>
           <Footer />
           <ScrollToTopButton />

@@ -1,39 +1,72 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation } from "@apollo/client";
 import { toast, Toaster } from "react-hot-toast";
-import { UPDATE_EMPLOYEE } from "../../../graphql/mutations/employeeMutation";
+import axios from "axios";
 
+import { UPDATE_EMPLOYEE } from "../../../graphql/mutations/employeeMutation";
 import { setShowSecondModal } from "../../../redux/PopupModel/modalSlice";
 import { setNavbarSticky } from "../../../redux/navbar/NavbarSlice";
 import SecondModal from "./SecondModal";
 import "./EmployeeModelPopup.css";
 
-const EditModelPopup = ({  stopEdit, empDetails }) => {
+const EditModelPopup = ({ employee, stopEdit, empDetails }) => {
   // const { loading, data } = useQuery(GET_EMPLOYEE, {
   //   variables: { ID: employee },
   // });
-  
 
   // console.log("employee", data);
-  const [editEmployee, { loading }] = useMutation(UPDATE_EMPLOYEE);
+
+  const [editEmployee, { loading, error }] = useMutation(UPDATE_EMPLOYEE);
   const modalContainerRef = useRef(null);
   const [linkEnabled, setLinkEnabled] = useState(false);
   const dispatch = useDispatch();
   const showSecondModal = useSelector((state) => state.modal.showSecondModal);
   const [employeeId, setEmployeeId] = useState(null);
   const [jobPosition, setJobPostion] = useState("");
-  const [image, setImage] = useState(null);
+  const [serviceTitle, setServiceTitle] = useState("");
+  const [services, setServices] = useState([]);
+  const [selectedService, setSelectedService] = useState(empDetails.service);
 
-  const handleUpload = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    console.log("File", file);
+  const createRequestHistory = async (employeeName, changeType, changeDate) => {
+    try {
+      const requestHistory = await axios.post("http://localhost:5000/api", {
+        employeeName,
+        changeType,
+        changeDate,
+      });
+      console.log(requestHistory);
+    } catch (error) {
+      console.error("Error creating request history:", error);
+    }
+  };
+
+  const createModificationHistory = async (
+    employeeName,
+    employeeId,
+    service,
+    changeDate
+  ) => {
+    try {
+      const modificationHistory = await axios.post(
+        "http://localhost:5000/api/modifications",
+        {
+          employeeName,
+          employeeId,
+          service,
+          changeDate,
+        }
+      );
+      console.log(modificationHistory);
+    } catch (err) {
+      console.error("Error creating modification history:", err);
+    }
   };
 
   const handleEdit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    const updatedService = selectedService;
     const employeeData = {
       firstname: formData.get("firstname"),
       lastname: formData.get("lastname"),
@@ -41,16 +74,30 @@ const EditModelPopup = ({  stopEdit, empDetails }) => {
       email: formData.get("email"),
       sex: formData.get("sex"),
       job: formData.get("job"),
+      service: formData.get("service"),
     };
-    console.log(formData);
+
     try {
       await editEmployee({
         variables: {
-          ID: empDetails.id.toString(),
+          ID: empDetails.id,
           employeeInput: employeeData,
         },
       });
+      await createModificationHistory(
+       ` ${employeeData.firstname} ${employeeData.lastname}`,
+       ` ${empDetails.id}`,
+        `${empDetails.service}`,
+        new Date().toISOString()
+      );
+      await createRequestHistory(
+        `${employeeData.firstname} ${employeeData.lastname}`,
+        "update",
+        new Date().toISOString()
+      );
+
       e.target.reset();
+      console.log(empDetails.service, updatedService);
       toast.success("employee edited succesufuly");
       setLinkEnabled(true);
     } catch (err) {
@@ -77,6 +124,38 @@ const EditModelPopup = ({  stopEdit, empDetails }) => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [dispatch]);
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/services");
+        const services = response.data;
+
+        if (services.length > 0) {
+          setServices(services);
+        }
+      } catch (error) {
+        console.error("Error fetching services:", error);
+      }
+    };
+    fetchServices();
+  }, []);
+  useEffect(() => {
+    const fetchTitle = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/services/title/${empDetails.service}`,)
+        
+        console.log(response.data);
+
+        if (response.data.length > 0) {
+          setServiceTitle(response.data);
+        }
+      } catch (err) {
+        console.error("Error fetching title service:", err);
+      }
+    };
+    fetchTitle();
+  }, [empDetails.service]);
 
   const handleShowSecondModal = () => {
     dispatch(setShowSecondModal(true));
@@ -116,16 +195,7 @@ const EditModelPopup = ({  stopEdit, empDetails }) => {
                   />
                 </div>
               </div>
-              <div className="input-box">
-                <label htmlFor="image">Image</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleUpload}
-                  disabled
-                  defaultValue={empDetails.image}
-                />
-              </div>
+
               <div className="input-container">
                 <div className="input-box">
                   <label htmlFor="email">Email Address</label>
@@ -167,6 +237,7 @@ const EditModelPopup = ({  stopEdit, empDetails }) => {
                     className="form-select mt-2 p-2 bg-light"
                     name="job"
                     id="job"
+                    defaultValue={empDetails.job}
                   >
                     <option value="nurse">infermiére</option>
                     <option value="doctor">medecin</option>
@@ -175,12 +246,30 @@ const EditModelPopup = ({  stopEdit, empDetails }) => {
                   </select>
                 </div>
               </div>
+              <div className="input-box ">
+                <label htmlFor="service">Service</label>
+                <select
+                  className="form-select mt-2 p-2 bg-light"
+                  name="service"
+                  id="service"
+                  value={selectedService}
+                  onChange={(e) => setSelectedService(e.target.value)}
+                  defaultValue={serviceTitle}
+                >
+                  <option disabled>{serviceTitle}</option>
+                  {services.map((service) => (
+                    <option key={service._id} value={service._id}>
+                      {service.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <div className="modalFooter">
                 <button className="btn btn-primary" type="submit">
                   {loading ? "Saving..." : "edit Details"}
                 </button>
-                {linkEnabled && <a onClick={handleShowSecondModal}>Next</a>}
+                {/* {linkEnabled && <a onClick={handleShowSecondModal}>Next</a>} */}
               </div>
             </div>
           </div>

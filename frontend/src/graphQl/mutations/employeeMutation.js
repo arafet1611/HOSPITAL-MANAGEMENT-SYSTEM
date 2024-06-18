@@ -34,3 +34,18 @@ export const UPDATE_EMPLOYEE = gql`
     }
   }
 `;
+export const UPDATE_EMPLOYEE_STATUS = gql`
+  mutation UpdateEmployeeStatus($ID: ID!, $isActive: Boolean!) {
+    updateEmployeeStatus(ID: $ID, isActive: $isActive) {
+      id
+      firstname
+      lastname
+      phone
+      email
+      sex
+      job
+      service
+      isActive
+    }
+  }
+`;

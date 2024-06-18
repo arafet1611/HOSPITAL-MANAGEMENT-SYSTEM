@@ -14,8 +14,7 @@ function EmployeeLeaveFilters({ onFilter }) {
     <div className="card border m-0">
       <div className="card-body p-3">
         <div className="row align-items-center">
-          {/* All Request Dropdown */}
-           {/* Status Dropdown */}
+        
            <div className="col-sm-4 my-1">
             <div className="input-group">
               <div className="input-group-prepend">

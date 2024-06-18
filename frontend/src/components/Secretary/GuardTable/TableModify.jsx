@@ -17,7 +17,7 @@ const TableModify = (props) => {
   const [rows, setRows] = useState([]);
   const [columnsData, setColumnsData] = useState([]);
   const [acceptedLeaveRequests, setAcceptedLeaveRequests] = useState([]);
-
+const [acceptedPermutationRequests ,setAcceptedPermutationRequests] = useState([]);
   const { serviceName } = useParams();
   const location = useLocation();
   const encodedText = encodeURIComponent(serviceName);
@@ -98,7 +98,7 @@ const TableModify = (props) => {
                 NumberOfValues: data.schemaObject.Assistant_NumberOfvalue.default,
               },
               {
-                headerName: "Interne",
+                headerName: "resident",
                 field: "Interne",
                 sortable: false,
                 filter: true,
@@ -173,7 +173,7 @@ const TableModify = (props) => {
     const fetchAcceptedLeaveRequests = async () => {
       try {
         const [rawMonth, onlyYear] = month.split("/");
-        const onlyMonth = parseInt(rawMonth, 10).toString(); // Supprimer le zéro initial
+        const onlyMonth = parseInt(rawMonth, 10).toString();
 
         const response = await axios.get(
           `http://localhost:5000/api/demandeLeave/${selectedServiceId}?month=${onlyMonth}&year=${onlyYear}`
@@ -186,7 +186,23 @@ const TableModify = (props) => {
 
     fetchAcceptedLeaveRequests();
   }, [month, selectedServiceId]);
+  useEffect(() => {
+    const fetchAcceptedLeaveRequests = async () => {
+      try {
+        const [rawMonth, onlyYear] = month.split("/");
+        const onlyMonth = parseInt(rawMonth, 10).toString();
 
+        const response = await axios.get(
+          `http://localhost:5000/api/permutationRequest/${selectedServiceId}?month=${onlyMonth}&year=${onlyYear}`
+        );
+        setAcceptedPermutationRequests(response.data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des demandes de congé acceptées:", error);
+      }
+    };
+
+    fetchAcceptedLeaveRequests();
+  }, [month, selectedServiceId]);
   const formatDateString = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -245,11 +261,58 @@ const TableModify = (props) => {
                   ) : (
                     <tr>
                       <td colSpan="6">
-                        <img
-                          src={EmptyBox}
-                          alt="Boîte Vide"
-                          className="empty-box-img"
-                        />
+                        
+                        <p>Aucune demande de congé acceptée trouvée</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+             
+            </div>
+          </div>
+          <div className="container my-5 p-3 bg-white shadow card text-center">
+            <div className="card-header text-bg-primary fw-bold">
+              Demandes de permutation à appliquer
+            </div>
+            <div className="card-body">
+              <table className="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Nom de la Employee</th>
+                    <th>Date de Début</th>
+                    <th>Date de Fin</th>
+                    <th>Nombre de Jours</th>
+
+                    <th>Appliqué</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {acceptedPermutationRequests.length > 0 ? (
+                    acceptedPermutationRequests.map((request, index) => (
+                      <tr key={index}>
+                        <td>
+                          {request.employee.firstname}{" "}
+                          {request.employee.lastname}
+                        </td>
+                        <td>
+                          {request.employeeSwitch.firstname}{" "}
+                          {request.employeeSwitch.lastname}
+                        </td>  
+                          <td>{new Date(request.date).toLocaleDateString()}</td>
+                        <td>{request.reason}</td>
+                        <td>
+                          <StatusDropdown
+                            request={request}
+                            onChange={onChange}
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6">
+                       
                         <p>Aucune demande de congé acceptée trouvée</p>
                       </td>
                     </tr>
@@ -262,8 +325,8 @@ const TableModify = (props) => {
           <div className="text-center ">
          <h2 className="text-center">
            Modification de tableau de garde de service {" "}
-           <strong>{serviceName}</strong> de (
-           <strong>{month}</strong>).
+           <strong className="text-primary">{serviceName}</strong> de (
+           <strong className="text-primary" >{month}</strong>).
          </h2>
         
        </div>
@@ -301,7 +364,7 @@ const TableModify = (props) => {
             <button
               type="button"
               className="btn btn-success ml-3"
-              onClick={() => navigate("/hr/table-view")}
+              onClick={() => navigate("/secretary/table-view")}
             >
               Voir le tableau
             </button>

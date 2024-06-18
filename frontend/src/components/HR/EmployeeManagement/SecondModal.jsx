@@ -75,7 +75,7 @@ function SecondModal({ employeeId, jobPosition,  serviceId}) {
         await createWorker({
           variables: { employeeID: employeeId, workerInput: inputData },
         });
-      } else if (jobPosition === "secretairy") {
+      } else if (jobPosition === "secretary") {
         await createSecretairy({
           variables: {
             serviceID: serviceId,
@@ -83,7 +83,7 @@ function SecondModal({ employeeId, jobPosition,  serviceId}) {
             secretairyInput: inputData1,
           },
         });
-      } else if (jobPosition === "Hr") {
+      } else if (jobPosition === "hr") {
         await createHr({
           variables: {
             employeeID: employeeId,
@@ -115,11 +115,11 @@ function SecondModal({ employeeId, jobPosition,  serviceId}) {
         <form onSubmit={handleSubmit}>
           <div ref={modalContainerRef}>
             <div className="input-box">
-              <label htmlFor="">Type</label>
+              <label htmlFor="">Grade</label>
               <input type="text" name="Type" id="Type" />
             </div>
             <div className="input-box">
-              <label htmlFor="">Categorie</label>
+              <label htmlFor="">specialiter</label>
               <input type="text" name="categorie" id="categorie" />
             </div>
             <div className="input-box">

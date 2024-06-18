@@ -83,21 +83,22 @@ const TableModelList = () => {
       headerName: "Le Nombre Exact D'employés",
       children: [
         {
-          headerName: "Resident",
-          field: "schemaObject.Interne_NumberOfvalue.default",
+          headerName: "Senior",
+          field: "schemaObject.Senior_NumberOfvalue.default",
           flex: 1,
         },
+      
         {
           headerName: "Assistant",
           field: "schemaObject.Assistant_NumberOfvalue.default",
           flex: 1,
         },
-
         {
-          headerName: "Senior",
-          field: "schemaObject.Senior_NumberOfvalue.default",
+          headerName: "Resident",
+          field: "schemaObject.Interne_NumberOfvalue.default",
           flex: 1,
         },
+        
       ],
     },
   ];

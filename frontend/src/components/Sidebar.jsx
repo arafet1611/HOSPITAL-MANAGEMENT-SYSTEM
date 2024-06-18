@@ -19,16 +19,16 @@ import '../Styles/Navbar.css';
 const Sidebar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const [role, setRole] = useState("secretary"); 
+  const [role, setRole] = useState(""); 
   const location = useLocation();
-// useEffect(() =>  {
-//   const storedUserInfo = localStorage.getItem("userInfo");
-//   if (storedUserInfo) {
-//     const parsedUserInfo = JSON.parse(storedUserInfo);
-//     setRole(parsedUserInfo.job);
+  useEffect(() =>  {
+    const storedUserInfo = localStorage.getItem("userInfo");
+    if (storedUserInfo) {
+      const parsedUserInfo = JSON.parse(storedUserInfo);
+      setRole(parsedUserInfo.job);
 
-//   }
-// },[]) 
+    }
+  },[]) 
 
   useEffect(() => {
     const handleScroll = () => {
@@ -77,7 +77,7 @@ const Sidebar = () => {
    links = [
      { title: 'Mes statistiques', icon: <MdOutlineDashboard style={{ width: '24px', height: '24px' }} />, to: '/employee/dashboard' },
      { title: 'Ma présence dans le tableau de garde', icon: <FaRegCalendarCheck style={{ width: '24px', height: '24px' }} />, to: '/employee/table-view' },
-     { title: 'Ma liste de demandes envoyées', icon: <RiMailSendFill style={{ width: '24px', height: '24px' }} />, to: '/employee/vacation-management' },
+     { title: 'Ma liste de demandes envoyées', icon: <RiMailSendFill style={{ width: '24px', height: '24px' }} />, to: '/employee/demande-list' },
      { title: 'Mon profil', icon: <FaUser style={{ width: '24px', height: '24px' }} />, to: '/my-profile' },
    ];
  }

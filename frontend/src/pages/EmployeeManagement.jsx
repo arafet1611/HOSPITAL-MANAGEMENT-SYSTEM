@@ -1,7 +1,7 @@
 import { useState } from "react";
 import EmployeeDetails from "../components/HR/EmployeeManagement/EmployeeDetails";
 import EmployeesList from "../components/HR/EmployeeManagement/EmployeesList";
-import FilderSideBar from "../components/FilderSideBar";
+// import FilderSideBar from "../components/FilderSideBar";
 
 
 function EmployeeManagement() {
@@ -39,7 +39,7 @@ function EmployeeManagement() {
               />
             </div>
             <div
-              className={`col-md-${showFilterSidebar || employeeId ? 9 : 12}`}
+              className={`col-md-${showFilterSidebar || employeeId ? 12 : 12}`}
               style={{ marginLeft: "-20px" }}
             >
               <button className="btn btn-light" onClick={toggleFilterSidebar}>
@@ -58,15 +58,13 @@ function EmployeeManagement() {
           </>
         ) : (
           <>
-            {showFilterSidebar && (
-              <div className="col-md-3">
-                <FilderSideBar onFilter={handleFiltrer} />
-              </div>
-            )}
+     
+     
             <div
-              className={`col-md-${showFilterSidebar || employeeId ? 9 : 12}`}
-              style={{ marginLeft: "-30px" }}
+              className={`col-md-${showFilterSidebar || employeeId ? 12 : 12}`}
             >
+                    {/* <FilderSideBar onFilter={handleFiltrer} />  */}
+
               <button className="btn btn-light" onClick={toggleFilterSidebar}>
                 {showFilterSidebar ? (
                   <i className="bi bi-layout-sidebar-inset"></i>

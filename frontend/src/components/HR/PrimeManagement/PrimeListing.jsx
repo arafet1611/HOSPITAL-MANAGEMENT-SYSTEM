@@ -35,6 +35,7 @@ const PrimeListing = () => {
 
   const columnDefs = useMemo(
     () => [
+      
       {
         headerName: "Service Title (Category)",
         field: "serviceTitleWithCategory",
@@ -236,7 +237,7 @@ const PrimeListing = () => {
           <div className="text-center pt-5">
             <h2 className="text-center">
               Tableau des valeurs des primes de tous les services de l'année{" "}
-              <strong>{workingYear.getFullYear()}</strong>
+              <strong className="text-primary">{workingYear.getFullYear()}</strong>
             </h2>
           </div>
           <div className="container my-5 p-3 bg-white shadow">

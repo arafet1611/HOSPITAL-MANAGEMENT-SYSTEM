@@ -1,6 +1,17 @@
+import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-function EmployeeLogSearch() {
+
+function EmployeeLogSearch({ onFilter }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onFilter({ employeeName: searchTerm, startDate, endDate });
+  };
+
   return (
     <div className="container my-5 p-3 bg-white shadow" lang="fr">
       <p className="h3 p-3">
@@ -8,17 +19,18 @@ function EmployeeLogSearch() {
         <hr className="hr" />
         <small className="text-muted h5">ce que vous recherchez</small>
       </p>
-      <form className="container">
+      <form className="container" onSubmit={handleSubmit}>
         <div className="form-group row">
-          <label htmlFor=" website" className="col-sm-2 col-form-label">
+          <label htmlFor="" className="col-sm-2 col-form-label">
             Rechercher
           </label>
           <div className="col-sm-10">
             <input
               type="text"
               className="form-control"
-              id="website"
-              placeholder="département, spécialité..."
+              placeholder="employeeName, spécialité..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
         </div>
@@ -28,7 +40,8 @@ function EmployeeLogSearch() {
           </label>
           <div className="col-sm-4">
             <DatePicker
-              selected={new Date()}
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
               dateFormat="MM/yyyy"
               showMonthYearPicker
               className="form-control "
@@ -39,7 +52,8 @@ function EmployeeLogSearch() {
           </label>
           <div className="col-sm-4">
             <DatePicker
-              selected={new Date()}
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
               dateFormat="MM/yyyy"
               showMonthYearPicker
               className="form-control "

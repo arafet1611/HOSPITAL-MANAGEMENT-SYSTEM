@@ -5,6 +5,7 @@ import {
   changeLeaveStatus,
   getLeaveDemandsByMonthAndService,
   markLeaveAsApplied,
+  getLeaveDemandsByEmployeeId,
 } from "../controller/leaveDemandeController.js";
 import upload from "../middleWares/multer.js";
 import { protectDoctor } from "../middleWares/authMiddleware.js";
@@ -13,6 +14,7 @@ router.post("/", protectDoctor, upload.single("file"), createLeaveDemand);
 router.get("/", getAllLeaveDemands);
 router.put("/:id", changeLeaveStatus);
 router.get("/:serviceId", getLeaveDemandsByMonthAndService);
+router.get("/employee/:employeeId", getLeaveDemandsByEmployeeId);
 router.put("/mark-as-applied/:id", markLeaveAsApplied);
 
 export default router;

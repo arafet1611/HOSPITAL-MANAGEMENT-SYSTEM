@@ -105,7 +105,7 @@ const TableEntry = (props) => {
                 NumberOfValues: data.schemaObject.Assistant_NumberOfvalue.default,
               },
               {
-                columnName: "Interne",
+                columnName: "resident",
                 columnType: "Text",
                 NumberOfValues: data.schemaObject.Interne_NumberOfvalue.default,
               },
@@ -331,7 +331,7 @@ console.log("selected services:", selectedService);
       {columnsData && selectedService ? (
        <div className="container my-5 p-3 bg-white shadow" lang="fr">
        <div>
-            <h1>Service Name: {selectedServiceName}</h1>
+            <h1>Service Name: <strong className="text-primary" >{selectedServiceName}</strong></h1>
           </div>
           <div
             className="ag-theme-alpine"
@@ -364,7 +364,7 @@ console.log("selected services:", selectedService);
             <button
               type="button"
               className="btn btn-success ml-3"
-              onClick={() => navigate("/hr/table-view")}
+              onClick={() => navigate("/secretary/table-view")}
             >
               View Table
             </button>
@@ -374,7 +374,7 @@ console.log("selected services:", selectedService);
         <div className=" container my-5 p-3 bg-white d-flex justify-content-center align-items-center vh-100">
           <div>
           <h2 className="text-center">
-          Aucune schéma  n'existe pour le service <strong>{selectedService}</strong> ce mois-ci (<strong>{month}</strong>).
+          Aucune schéma  n'existe pour le service <strong className="text-primary" >{selectedService}</strong> ce mois-ci (<strong className="text-primary">{month}</strong>).
           </h2>            
           <img src={EmptyBox} alt="Empty Box" className="d-block mx-auto" />
           </div>

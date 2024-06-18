@@ -45,7 +45,7 @@ const EmployeeResolver = {
 
     employees: async () => {
       try {
-        return await Employee.find({}).populate("service");
+        return await Employee.find({});
       } catch (e) {
         console.error("erreur getting employee", e);
       }
@@ -55,7 +55,16 @@ const EmployeeResolver = {
     async createEmployee(
       _,
       {
-        employeeInput: { firstname, lastname, phone, email, sex, job,service },
+        employeeInput: {
+          firstname,
+          lastname,
+          phone,
+          email,
+          sex,
+          job,
+          service,
+          isActive,
+        },
       }
     ) {
       const randomPassword = generateRandomPassword(); // You need to define this function
@@ -71,6 +80,7 @@ const EmployeeResolver = {
         service: service,
         password: hashedPassword,
         dateJoining: new Date().toISOString(),
+        isActive: isActive !== undefined ? isActive : true,
       });
 
       const res = await createdemployee.save();
@@ -136,6 +146,19 @@ const EmployeeResolver = {
         return updatedEmployee;
       } catch (err) {
         console.error("Erreur updating employee", err);
+      }
+    },
+
+    async updateEmployeeStatus(_, { ID, isActive }) {
+      try {
+        const updatedEmployee = await Employee.findByIdAndUpdate(
+          { _id: ID },
+          { isActive: isActive },
+          { new: true }
+        );
+        return updatedEmployee;
+      } catch (err) {
+        console.error("Erreur updating employee status", err);
       }
     },
   },

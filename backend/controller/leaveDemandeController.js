@@ -34,6 +34,7 @@ export const getAllLeaveDemands = async (req, res) => {
   try {
     const leaveDemands = await LeaveDemande.find().populate({
       path: "employee",
+
       populate: { path: "service" },
     });
     res.json(leaveDemands);
@@ -114,6 +115,28 @@ export const getLeaveDemandsByMonthAndService = async (req, res) => {
     const filteredLeaveDemands = leaveDemands.filter((ld) => ld.employee);
 
     res.json(filteredLeaveDemands);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+export const getLeaveDemandsByEmployeeId = async (req, res) => {
+  const { employeeId } = req.params;
+  console.log(employeeId);
+  try {
+    const leaveDemands = await LeaveDemande.find({
+      employee: employeeId,
+    }).populate({
+      path: "employee",
+      populate: { path: "service" },
+    });
+    console.log(leaveDemands);
+    if (!leaveDemands.length) {
+      return res
+        .status(404)
+        .json({ message: "No leave demands found for this employee" });
+    }
+
+    res.json(leaveDemands);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

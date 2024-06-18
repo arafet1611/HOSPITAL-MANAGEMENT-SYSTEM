@@ -136,7 +136,7 @@ const EmployeesList = ({ setEmployeeId, filters, hideEmployeeDetails }) => {
                         empId={emp.id}
                         empData={emp}
                         handlestickyNavbar={handlestickyNavbar}
-                        isActive={emp.active}
+                        isActive={emp.isActive}
                         hideEmployeeDetails={hideEmployeeDetails}
                       />
                     </div>

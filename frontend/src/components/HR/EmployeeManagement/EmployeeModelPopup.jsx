@@ -22,14 +22,9 @@ const ModelPopup = () => {
   const [employeeId, setEmployeeId] = useState(null);
   const [jobPosition, setJobPosition] = useState("");
   const [serviceSelected, setServiceSelected] = useState("");
-  const [image, setImage] = useState(null);
   const [services, setServices] = useState([]);
 
-  const handleUpload = (e) => {
-    const file = e.target.files[0];
-    setImage(file);
-    console.log("File", file);
-  };
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -154,14 +149,7 @@ const ModelPopup = () => {
                         />
                       </div>
                     </div>
-                    <div className="input-box">
-                      <label htmlFor="image">Image</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleUpload}
-                      />
-                    </div>
+                    
                     <div className="input-container">
                       <div className="input-box">
                         <label htmlFor="email">Email Address</label>
@@ -196,8 +184,8 @@ const ModelPopup = () => {
                           <option value="doctor">medecin</option>
                           <option value="technician">technicien</option>
                           <option value="worker">ouvrier</option>
-                          <option value="secretairy">secretaire</option>
-                          <option value="Hr">resource humaine</option>
+                          <option value="secretary">secretaire</option>
+                          <option value="hr">resource humaine</option>
                         </select>
                       </div>
                     </div>

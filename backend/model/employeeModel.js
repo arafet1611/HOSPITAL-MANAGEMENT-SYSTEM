@@ -33,6 +33,10 @@ const employeeSchema = new mongoose.Schema({
   dateJoining: {
     type: Date,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 });
 const Employee = mongoose.model("Employee", employeeSchema);
 export default Employee;

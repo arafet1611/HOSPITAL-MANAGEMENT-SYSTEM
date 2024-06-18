@@ -161,6 +161,7 @@ const authEmployee = async (req, res) => {
           firstname: user.firstname,
           lastname: user.lastname,
           email: user.email,
+          sex: user.sex,
           job: user.job,
           service: user.service,
           token: generateToken(user._id),

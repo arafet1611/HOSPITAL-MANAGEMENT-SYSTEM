@@ -39,7 +39,17 @@ const getService = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
+const getTitle = async (req, res) => {
+  try {
+    const service = await Service.findById(req.params.id);
+    if (!service) {
+      return res.status(404).json({ message: "Service not found" });
+    }
+    res.json(service);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 const updateService = async (req, res) => {
   try {
     const { title, content, category } = req.body;
@@ -82,4 +92,5 @@ export {
   getService,
   updateService,
   deleteService,
+  getTitle,
 };

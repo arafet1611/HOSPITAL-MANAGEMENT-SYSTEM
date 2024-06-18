@@ -140,10 +140,10 @@ const PrimeAmountListing = () => {
         console.log("doctorid", doctor.employee, "year", workingYear);
 
         const response = await axios.get(
-          `http://localhost:5000/api/employeeGaurdboard/getAll/${doctor.employee.id}?year=${workingYear}`
+          `http://localhost:5000/api/employeeGaurdboard/getAllByYear/${doctor.employee.id}?year=${workingYear}`
         );
         const employeeGuard = response.data;
-
+console.log(employeeGuard);
         const { nbOfDaysWeekend, nbOfDaysHolidays, nbOfDaysRegular } =
           calculateGuardingDays(employeeGuard);
 
@@ -182,6 +182,7 @@ const PrimeAmountListing = () => {
       }
       setShowTables(true);
       console.log("Guarding Dates by Employee", results);
+      setEmployeePrimes(results);
     } catch (error) {
       toast.error("Error fetching guarding dates");
       console.error("Error fetching guarding dates:", error);
@@ -452,11 +453,11 @@ const PrimeAmountListing = () => {
       {showTables ? (
         <>
           <div className="container my-5 py-5 px-3  bg-white shadow">
-          <h3 className="text-center " style={{ fontSize: '1.5rem' }}>Primes mensuelles des médecins seniors </h3>
+          <h3 className="text-center " style={{ fontSize: '1.5rem' }}>Primes mensuelles des médecins <strong className="text-primary">senior</strong> en <strong className="text-primary">{workingYear}</strong> </h3>
             {renderAgGrid("senior")}
-            <h3 className="text-center " style={{ fontSize: '1.5rem' }}>Primes mensuelles des médecins assistant </h3>
+            <h3 className="text-center " style={{ fontSize: '1.5rem' }}>Primes mensuelles des médecins  <strong className="text-primary">assistant</strong> en <strong className="text-primary">{workingYear}</strong> </h3>
             {renderAgGrid("assistant")}
-            <h3 className="text-center " style={{ fontSize: '1.5rem' }}>Primes mensuelles des médecins résidents </h3>
+            <h3 className="text-center " style={{ fontSize: '1.5rem' }}>Primes mensuelles des médecins  <strong className="text-primary">résidents</strong> en <strong className="text-primary">{workingYear}</strong> </h3>
             {renderAgGrid("interne")}
           </div>
         </>

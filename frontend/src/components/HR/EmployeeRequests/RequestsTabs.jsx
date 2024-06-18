@@ -1,4 +1,10 @@
-function RequestsTabs() {
+import { useState } from "react";
+
+function RequestsTabs({ setSelectedTab }) {
+  const handleTabClick = (tab) => {
+    setSelectedTab(tab);
+  };
+
   return (
     <>
       <style>{styles}</style>
@@ -6,29 +12,45 @@ function RequestsTabs() {
       <div className="filter col-md-12 p-2 d-flex justify-content-center">
         <ul className="nav">
           <li className="nav-item mx-lg-4">
-            <a to="/" className="link text-white px-2">
+            <span
+              className="link text-white px-2"
+              onClick={() => handleTabClick("leaveRequests")}
+            >
               Demande de Congé
-            </a>
+            </span>
           </li>
           <li className="nav-item mx-lg-4">
-            <a to="/" className="link text-white px-2">
+            <span
+              className="link text-white px-2"
+              onClick={() => handleTabClick("permutationRequests")}
+            >
+              Demande de Permutation
+            </span>
+          </li>
+          <li className="nav-item mx-lg-4">
+            <span
+              className="link text-white px-2"
+              onClick={() => handleTabClick("trainingRequests")}
+            >
               Demande de Formation
-            </a>
+            </span>
           </li>
           <li className="nav-item mx-lg-4">
-            <a to="/" className="link text-white px-2">
-              Demande d&apos;Équipement
-            </a>
+            <span
+              className="link text-white px-2"
+              onClick={() => handleTabClick("equipmentRequests")}
+            >
+              Demande D&apos;Équipement
+            </span>
           </li>
+          
           <li className="nav-item mx-lg-4">
-            <a to="/" className="link text-white px-2">
-              Question Générale
-            </a>
-          </li>
-          <li className="nav-item mx-lg-4">
-            <a to="/" className="link text-white px-2">
-              demande document
-            </a>
+            <span
+              className="link text-white px-2"
+              onClick={() => handleTabClick("documentRequests")}
+            >
+              Demande de Document
+            </span>
           </li>
         </ul>
       </div>
@@ -43,8 +65,8 @@ const styles = `
     background-color: #0056b3;
   }
   .link {
-   
     color: white;
+    cursor: pointer;
     text-decoration: none !important;
     transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
   }
@@ -56,6 +78,5 @@ const styles = `
   } 
   .nav-item:hover .link {
     background-color: #002D62;
-    
   }
 `;

@@ -28,6 +28,8 @@ const TableView = () => {
   const [DataHistory, setDataHistory] = useState([]);
   const [selectedField, setSelectedField] = useState([]);
   const [submitted, setSubmitted] = useState(false);
+  const [changesAfterLastConfirm, setChangesAfterLastConfirm] = useState(0);
+
   console.log(DataHistory);
   console.log(lastConfirmDate);
 
@@ -94,7 +96,7 @@ const TableView = () => {
               filter: true,
             },
             {
-              headerName: "Interne",
+              headerName: "resident",
               field: "Interne",
               sortable: false,
               filter: true,
@@ -211,7 +213,7 @@ const TableView = () => {
           url: "http://localhost:5000/api/employeeGaurdboard",
           data,
         });
-
+      toast.success("table est confirmer avec success" ) ;
         console.log("Response:", response.data);
       } catch (error) {
         console.error("Error:", error.message);
@@ -269,12 +271,17 @@ const TableView = () => {
   };
 
   // Calculate the number of changes after lastConfirmDate
-  const changesAfterLastConfirm = DataHistory.filter((data) => {
-    const changeDate = new Date(data.dateOfChange);
-    const confirmDate = new Date(lastConfirmDate);
-    return changeDate > confirmDate;
-  }).length;
+  useEffect(() => {
+    if (lastConfirmDate && DataHistory.length > 0) {
+      const filteredChanges = DataHistory.filter((data) => {
+        const changeDate = new Date(data.dateOfChange);
+        const confirmDate = new Date(lastConfirmDate);
+        return changeDate > confirmDate;
+      }).length;
 
+      setChangesAfterLastConfirm(filteredChanges);
+    }
+  }, [lastConfirmDate, DataHistory]);
   return (
     <div className="container">
       <Toaster />
@@ -398,13 +405,13 @@ const TableView = () => {
                     }}
                   />
                 </div>
-                {lastConfirmDate ? (
+                {lastConfirmDate  && changesAfterLastConfirm ? (
                   <div className="alert alert-info m-2 w-50" role="alert">
                     <MdOutlineNewReleases />
                     <small>
                       Ce tableau a été confirmé pour la dernière fois le{" "}
-                      <strong>{lastConfirmDate}</strong>, Depuis lors,{" "}
-                      <strong>{changesAfterLastConfirm}</strong> changements ont
+                      <strong className="text-primary">{lastConfirmDate}</strong>, Depuis lors,{" "}
+                      <strong className="text-primary">{changesAfterLastConfirm}</strong> changements ont
                       eu lieu.
                     </small>
                   </div>
@@ -415,7 +422,7 @@ const TableView = () => {
                     className="btn btn-primary ml-2 mx-2"
                     onClick={handleconfirm}
                   >
-                    {lastConfirmDate
+                    {lastConfirmDate  && changesAfterLastConfirm
                       ? "Re-confirmer le tableau"
                       : "Confirmer le tableau"}
                   </button>
@@ -457,9 +464,9 @@ const TableView = () => {
                         </small>
                       </div>
                       <p className="mb-1">
-                        L'employée <strong>{data.oldValue}</strong> a été
-                        remplacée par <strong>{data.newValue} </strong>
-                        le jour <strong>{data.date}</strong> <br />
+                        L'employée <strong className="text-primary">{data.oldValue}</strong> a été
+                        remplacée par <strong className="text-primary">{data.newValue} </strong>
+                        le jour <strong className="text-primary">{data.date}</strong> <br />
                         <strong>Pour Reason :</strong>
                       </p>
                     </a>

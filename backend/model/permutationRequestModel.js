@@ -9,6 +9,10 @@ const permuationRequestModel = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  service: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Service",
+  },
   employeeSwitch: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Employee",

@@ -210,7 +210,7 @@ const ColumnCreation = () => {
           <div>
             <div className="text-center pt-5">
               <h3 className="text-center">
-                Créer un schema de tableau de garde de service <strong>{selectedService}</strong> de mois <strong>{formatMonthYear(month)}</strong>
+                Créer un schema de tableau de garde de service <strong className="text-primary" >{selectedService}</strong> de mois <strong className="text-primary">{formatMonthYear(month)}</strong>
               </h3>
             </div>
             {renderColumnForms()}
@@ -230,7 +230,7 @@ const ColumnCreation = () => {
                 type="button"
                 className="btn btn-info ml-2"
                 onClick={() =>
-                  navigate("/hr/table-entry", {
+                  navigate("/secretary/table-entry", {
                     state: { serviceName: selectedService },
                   })
                 }

@@ -50,6 +50,9 @@ import PermutationRequestRoute from "./routes/permutationRequestRoute.js";
 import NotificationRoute from "./routes/NotificationRoute.js";
 import PrimeRoute from "./routes/primeRoute.js";
 import SchemaObjectModel from "./routes/schemaObjectRoute.js";
+
+import RequestHistoryRoute from "./routes/requestHistoryRoute.js";
+import ModificationHistoryRoute from "./routes/modificationHistoryRoute.js";
 dotenv.config();
 
 connectDB();
@@ -111,6 +114,8 @@ async function startServer() {
   app.use("/api/notifications", NotificationRoute);
   app.use("/api/prime", PrimeRoute);
   app.use("/api/schemaObject", SchemaObjectModel);
+  app.use("/api", RequestHistoryRoute);
+  app.use("/api/modifications", ModificationHistoryRoute);
   app.use((req, res) => {
     res.send("Hello from the Express Apollo server");
   });

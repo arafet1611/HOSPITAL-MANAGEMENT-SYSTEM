@@ -29,7 +29,10 @@ function Navbar() {
         userRole: parsedUserInfo.role,
       });
 
-      axios.get(`http://localhost:5000/api/notifications/${parsedUserInfo.service}?job=${parsedUserInfo.job}&userId=${parsedUserInfo._id}`)
+      axios
+        .get(
+          `http://localhost:5000/api/notifications/${parsedUserInfo.service}?job=${parsedUserInfo.job}&userId=${parsedUserInfo._id}`
+        )
         .then((response) => {
           console.log(response);
           const notifications = response.data;
@@ -42,7 +45,9 @@ function Navbar() {
 
       socketRef.current.on("guardingDatesUpdated", (data) => {
         if (data.role && data.role === parsedUserInfo.role) {
-          toast(`Notification for role ${parsedUserInfo.role}: ${data.message}`);
+          toast(
+            `Notification for role ${parsedUserInfo.role}: ${data.message}`
+          );
           setNotifications((prev) => [data, ...prev]);
           setUnreadCount((prev) => prev + 1);
         } else if (!data.role) {
@@ -66,20 +71,26 @@ function Navbar() {
     if (storedUserInfo) {
       const parsedUserInfo = JSON.parse(storedUserInfo);
       const handleLeaveRequestStatusChange = (data) => {
-        if(data.userId === parsedUserInfo._id){
-        toast(`Notification: ${data.message}`);
-        setNotifications((prev) => [data, ...prev]);
-        setUnreadCount((prev) => prev + 1);
+        if (data.userId === parsedUserInfo._id) {
+          toast(`Notification: ${data.message}`);
+          setNotifications((prev) => [data, ...prev]);
+          setUnreadCount((prev) => prev + 1);
         }
       };
 
       if (socketRef.current) {
-        socketRef.current.on("leaveRequestStatusChange", handleLeaveRequestStatusChange);
+        socketRef.current.on(
+          "leaveRequestStatusChange",
+          handleLeaveRequestStatusChange
+        );
       }
 
       return () => {
         if (socketRef.current) {
-          socketRef.current.off("leaveRequestStatusChange", handleLeaveRequestStatusChange);
+          socketRef.current.off(
+            "leaveRequestStatusChange",
+            handleLeaveRequestStatusChange
+          );
         }
       };
     }
@@ -96,7 +107,6 @@ function Navbar() {
   const handleNotificationsClick = () => {
     setUnreadCount(0); // Reset unread count when notifications are viewed
   };
-
 
   return (
     <>
@@ -124,127 +134,13 @@ function Navbar() {
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
+              {/* Rendered nav items */}
               <ul className="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
-                <li className="nav-item dropdown show">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    type="button"
-                    id="dropdownMenuButton"
-                    data-bs-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    LE CHU
-                  </a>
-                  <div
-                    className="dropdown-menu border-0"
-                    aria-labelledby="dropdownMenuButton"
-                  >
-                    <a className="dropdown-item" href="#">
-                      MOT DE BIENVENUE
-                    </a>
-                    <div className="dropdown-divider bg-info"></div>
-                    <a className="dropdown-item" href="#">
-                      PRESENTATION DU CHU
-                    </a>
-                    <div className="dropdown-divider bg-info"></div>
-                    <div className="dropend m-0 p-0">
-                      <a
-                        className="dropdown-item dropdown-toggle"
-                        href="#"
-                        id="dropdown-layouts"
-                        data-bs-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                      >
-                        ORGANIZATIONS
-                      </a>
-                      <div className="dropdown-divider bg-info"></div>
-                      <div
-                        className="dropdown-menu border-0"
-                        aria-labelledby="dropdown-layouts"
-                      >
-                        <a className="dropdown-item" href="#">
-                          Fullscreen
-                        </a>
-                        <div className="dropdown-divider bg-info"></div>
-                        <a className="dropdown-item" href="#">
-                          Empty
-                        </a>
-                        <div className="dropdown-divider bg-info"></div>
-                        <a className="dropdown-item" href="#">
-                          Magic
-                        </a>
-                        <div
-                          className="dropdown-divider bg-info"
-                          style={{ height: "5px" }}
-                        ></div>
-                      </div>
-                    </div>
-                    <a className="dropdown-item" href="#">
-                      NOS SERVICE
-                    </a>
-                    <div className="dropdown-divider bg-info"></div>
-                    <a className="dropdown-item" href="#">
-                      INDICATEURS CLES
-                    </a>
-                    <div
-                      className="dropdown-divider bg-info"
-                      style={{ height: "5px" }}
-                    ></div>
-                  </div>
-                </li>
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarPatientDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    PATIENT
-                  </a>
-                  <div
-                    className="dropdown-menu"
-                    aria-labelledby="navbarPatientDropdown"
-                  ></div>
-                </li>
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    role="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    ESPACE PROFESSIONNEL
-                  </a>
-                  <div
-                    className="dropdown-menu"
-                    aria-labelledby="navbarEspaceProfessionnelDropdown"
-                  ></div>
-                </li>
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    role="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    RECHERCHE
-                  </a>
-                  <div
-                    className="dropdown-menu"
-                    aria-labelledby="navbarEspaceProfessionnelDropdown"
-                  ></div>
-                </li>
+                {/* Dropdown items */}
+                {/* Your existing dropdown items are removed here */}
               </ul>
+  
+              {/* User info section */}
               <div className="navbar align-self-center d-flex">
                 {!userInfo ? (
                   <NavLink
@@ -257,20 +153,30 @@ function Navbar() {
                   </NavLink>
                 ) : (
                   <>
-                    <NavLink
-                      className="nav-link text-success"
-                      to="/my-profile"
-                      exact
-                      title="Profile"
-                    >
-                      Hello, Mr{" "}
-                      <strong>
-                        {userInfo.firstname.charAt(0).toUpperCase() +
-                          userInfo.firstname.slice(1)}{" "}
-                        {userInfo.lastname.charAt(0).toUpperCase() +
-                          userInfo.lastname.slice(1)}
-                      </strong>
-                    </NavLink>
+                    {userInfo.isAdmin ? (
+                      <div className="nav-link text-success">
+                        {" "}
+                        Bonjour, Admin
+                      </div>
+                    ) : (
+                      <NavLink
+                        className="nav-link text-success"
+                        to="/my-profile"
+                        exact
+                        title="Profile"
+                      >
+                        {userInfo.isAdmin}
+                        Bonjour, {userInfo.sex === "male" ? "M." : "Mme"}{" "}
+                        <strong>
+                          {userInfo.firstname.charAt(0).toUpperCase() +
+                            userInfo.firstname.slice(1)}{" "}
+                          {userInfo.lastname.charAt(0).toUpperCase() +
+                            userInfo.lastname.slice(1)}
+                        </strong>
+                      </NavLink>
+                    )}
+  
+                    {/* Notifications dropdown */}
                     <div className="nav-item dropdown">
                       <a
                         className="nav-link dropdown-toggle notification-icon"
@@ -329,6 +235,8 @@ function Navbar() {
                         </div>
                       </div>
                     </div>
+  
+                    {/* Logout link */}
                     <NavLink
                       className="nav-link"
                       onClick={logout}
@@ -347,7 +255,5 @@ function Navbar() {
         </nav>
       </div>
     </>
-  );
-}
-
+  );}
 export default Navbar;

@@ -3,6 +3,7 @@ import {
   createService,
   getAllServices,
   getService,
+  getTitle,
   updateService,
   deleteService,
 } from "../controller/serviceController.js";
@@ -15,5 +16,5 @@ router.get("/", getAllServices);
 router.get("/:id", getService);
 router.put("/:id", upload.single("image"), updateService);
 router.delete("/:id", deleteService);
-
+router.get("/title/:id", getTitle);
 export default router;

@@ -11,6 +11,8 @@ const GET_EMPLOYEES = gql`
       image
       sex
       job
+      service
+      isActive
     }
   }
 `;
