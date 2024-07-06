@@ -6,7 +6,7 @@ const StatusDropdown = ({ request, onChange }) => {
     const newStatus = event.target.value;
     try {
       if (newStatus === "Appliqué") {
-        await axios.post(`http://localhost:5000/api/demandeLeave/mark-as-applied/${request._id}`);
+        await axios.post(`http://localhost:5000/api/permutationRequest/mark-as-applied/${request._id}`);
         toast.success("Statut mis à jour avec succès");
       }
       onChange(request._id, newStatus === "Appliqué");

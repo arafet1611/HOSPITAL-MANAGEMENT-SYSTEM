@@ -16,14 +16,14 @@ function Banner() {
                 <div className="py-5 row d-flex align-items-center">
                   <div className="banner-content col-lg-8 col-8 offset-2 m-lg-auto text-left py-5 pb-5">
                     <h1 className="banner-heading text-primary display-3 mb-0 pb-5 mx-0 px-0 light-300 typo-space-line">
-                      Develop <strong>Strategies</strong> for 
-                      <br/>Unlimited Learning
+                      HOPITALE <strong>taher sfar</strong> 
+                      <br/>
                     </h1>
                     <p className="banner-body text-body py-3 h5 " style={{ textShadow: '1px 1px 2px #fff' }}>
-                      Never stop learning. Never stop exploring. Never stop growing. Never stop living. Never stop smiling.
+                    L'hôpital offre une gamme complète de services médicaux, y compris des soins d'urgence, des consultations spécialisées
                     </p>
                     <NavLink to="/" exact>
-                      <button type="button" className="btn rounded-pill btn-outline-primary btn-lg px-4">Know More</button>
+                      <button type="button" className="btn rounded-pill btn-outline-primary btn-lg px-4">lire mieu</button>
                     </NavLink>
                   </div>
                 </div>
@@ -32,13 +32,13 @@ function Banner() {
                 <div className="py-5 row d-flex align-items-center">
                   <div className="banner-content col-lg-8 col-8 offset-2 m-lg-auto text-left py-5 pb-5">
                     <h1 className="banner-heading text-primary display-3 mb-0 pb-5 mx-0 px-0 light-300 typo-space-line">
-                      Explore various <strong>Courses</strong>
+                    Équipements Modernes 
                     </h1>
                     <p className="banner-body text-body py-3 h5 " style={{ textShadow: '1px 1px 2px #fff' }}>
-                      We are offering a bunch of updated courses to make you market-ready. Start your journey now!
+                    Il est équipé de technologies médicales modernes, ce qui permet des diagnostics précis et des traitements efficaces
                     </p>
                     <NavLink to="/" exact>
-                      <button type="button" className="btn rounded-pill btn-outline-primary btn-lg px-4">Explore Now</button>
+                      <button type="button" className="btn rounded-pill btn-outline-primary btn-lg px-4">lire mieu</button>
                     </NavLink>
                   </div>
                 </div>
@@ -47,13 +47,13 @@ function Banner() {
                 <div className="py-5 row d-flex align-items-center">
                   <div className="banner-content col-lg-8 col-8 offset-2 m-lg-auto text-left py-5 pb-5">
                     <h1 className="banner-heading text-primary display-3 mb-0 pb-5 mx-0 px-0 light-300 typo-space-line">
-                      <strong>Test</strong> your limits
+                    Personnel Qualifié 
                     </h1>
                     <p className="banner-body text-body py-3 h5 " style={{ textShadow: '1px 1px 2px #fff' }}>
-                      Attending the lectures alone are not enough. Take a step beyond by testing your knowledge with our updated tests.
+                    L'hôpital compte sur un personnel médical et paramédical hautement qualifié
                     </p>
                     <NavLink to="/" exact>
-                      <button type="button" className="btn rounded-pill btn-outline-primary btn-lg px-4">Get Started</button>
+                      <button type="button" className="btn rounded-pill btn-outline-primary btn-lg px-4">lire mieu</button>
                     </NavLink>
                   </div>
                 </div>

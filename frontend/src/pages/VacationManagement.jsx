@@ -13,50 +13,7 @@ function VacationManagement() {
   };
   return (
     <div className="container-fluid ">
-      <div className="container-fluid py-4 px-4  " style={{ backgroundColor: "#0056b3"}}>
-        
-      <div className="row g-4">
-        <div className="col-sm-6 col-xl-3">
-          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
-            <FaCalendarDay className="text-primary" style={{ fontSize: '3em' }} />
-            <div className="ms-3">
-              <p className="mb-2">Nombre de jours 
-<br/> travaillés</p> 
-              <h6 className="mb-0">260</h6>
-            </div>
-          </div>
-        </div>
-        <div className="col-sm-6 col-xl-3">
-          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
-            <FaCalendarAlt className="text-primary" style={{ fontSize: '3em' }} />
-            <div className="ms-3">
-              <p className="mb-2">Nombre de jours <br/> fériés</p>
-              <h6 className="mb-0">53</h6>
-            </div>
-          </div>
-        </div>
-        <div className="col-sm-6 col-xl-3">
-          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
-            <FaBed className="text-primary" style={{ fontSize: '3em' }} />
-            <div className="ms-3">
-              <p className="mb-2">Nombre de 
- <br/>week-ends</p> 
-              <h6 className="mb-0">52</h6>
-
-            </div>
-          </div>
-        </div>
-        <div className="col-sm-6 col-xl-3">
-          <div className="bg-light rounded d-flex align-items-center justify-content-between p-4">
-            <FaCalendarWeek className="text-primary" style={{ fontSize: '3em' }} />
-            <div className="ms-3">
-              <p className="mb-2">Total jours de <br/>Repos</p> 
-              <h6 className="mb-0">105</h6>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  
     <div className="container">
     
       <h1>Display Calendar</h1>

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setNavbarSticky } from "../../../redux/navbar/NavbarSlice";
 import AddVacationPopupModel from "./addVacationPopupModel";
+import { toast, Toaster } from "react-hot-toast";
 function VacationList() {
   const [vacationData, setVacationData] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -19,7 +20,9 @@ function VacationList() {
       try {
         const response = await axios.get("http://localhost:5000/api/vacations");
         console.log("vacations list", response.data);
+        
         setVacationData(response.data);
+        
       } catch (error) {
         console.error("Error fetching vacations:", error);
       }
@@ -93,16 +96,17 @@ function VacationList() {
     <>
       <style>{styles}</style>
       {showModal && <AddVacationPopupModel setShowModal={setShowModal} />}
-      <button
-        className="btn btn-primary"
-        onClick={() => {
-          setShowModal(true);
-          dispatch(setNavbarSticky(false));
-        }}
-      >
-        <i className="bi bi-plus-lg"></i>
-        Ajouter Jours Fériés
-      </button>
+      <div className="d-flex justify-content-end mb-3">
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            setShowModal(true);
+            dispatch(setNavbarSticky(false));
+          }}
+        >
+          <i className="bi bi-plus-lg"></i> Ajouter Jours Fériés
+        </button>
+      </div>
 
       <div className="row">
         <div className="col-xl-12 col-sm-12 col-12">

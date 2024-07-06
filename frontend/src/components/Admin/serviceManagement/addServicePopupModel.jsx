@@ -6,7 +6,7 @@ import { toast, Toaster } from "react-hot-toast";
 
 import axios from "axios";
 
-const ModelPopup = ({ setShowModal, category , updateServiceList }) => {
+const ModelPopup = ({ setShowModal, category , updateServiceList  }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const modalContainerRef = useRef(null);
@@ -51,6 +51,8 @@ const ModelPopup = ({ setShowModal, category , updateServiceList }) => {
       setLoading(false);
       setShowModal(false);
       updateServiceList(response.data); 
+      window.location.replace("/admin/service-management");
+
 
     } catch (err) {
       console.error(err);

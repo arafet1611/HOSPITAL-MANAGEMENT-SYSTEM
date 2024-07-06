@@ -33,6 +33,8 @@ console.log(empDetails.employee);
 
       if (response.status === 200) {
         toast.success("Image uploaded successfully");
+        window.location.replace("/my-profile");
+
       } else {
         toast.error("Failed to upload image");
       }

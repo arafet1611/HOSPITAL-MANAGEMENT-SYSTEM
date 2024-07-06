@@ -7,7 +7,7 @@ import AddServicePopupModel from "./addServicePopupModel";
 import EditServicePopupModel from "./editServicePopupModel";
 
 function ServiceList({ setImage }) {
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState([]); // Initialize as an empty array
   const [collapsedItems, setCollapsedItems] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
@@ -49,7 +49,7 @@ function ServiceList({ setImage }) {
             <hr className="hr" />
             <small className="text-muted h5">Services Catégorie A</small>
           </p>
-          {services
+          {Array.isArray(services) && services
             .filter((item) => item.category === "A")
             .map((item, index) => (
               <div className="card shadow m-2" key={item._id}>
@@ -119,7 +119,7 @@ function ServiceList({ setImage }) {
           <p className="h3 p-3">
             <small className="text-muted h5">Services Catégorie B</small>
           </p>
-          {services
+          {Array.isArray(services) && services
             .filter((item) => item.category === "B")
             .map((item, index) => (
               <div className="card shadow m-2" key={item._id}>

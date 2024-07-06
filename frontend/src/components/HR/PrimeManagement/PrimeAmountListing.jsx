@@ -20,11 +20,7 @@ const PrimeAmountListing = () => {
   const [primeValues, setPrimeValues] = useState({});
   const [employeePrimes, setEmployeePrimes] = useState([]);
   const [showTables, setShowTables] = useState(false);
-
-  useEffect(() => {
-    console.log("employee primes", employeePrimes);
-    console.log("prime values", primeValues);
-  }, [employeePrimes, primeValues]);
+console.log("employeePrimes", employeePrimes)
 
   useEffect(() => {
     const fetchPrimeValues = async () => {
@@ -34,7 +30,6 @@ const PrimeAmountListing = () => {
           `http://localhost:5000/api/prime/${workingYear}`
         );
         const primes = response.data;
-        console.log("prime", primes);
         setPrimeValues(primes);
       } catch (error) {
         console.error("Error fetching primes:", error);
@@ -121,7 +116,10 @@ const PrimeAmountListing = () => {
       setServiceId(null);
     }
   }, [selectedService, services]);
-
+  useEffect(() => {
+    console.log("employee primes", employeePrimes);
+    console.log("prime values", primeValues);
+  }, [employeePrimes, primeValues]);
   useEffect(() => {
     if (workingYear) {
       setSunDays(getAllSundays(workingYear));
@@ -229,29 +227,28 @@ console.log(employeeGuard);
   };
 
   const calculateBonus = (employee, primeType, days) => {
-    console.log("employee", employee, "primetype", primeType, "days", days);
     const primeValue = primeValues.find(
       (prime) => prime.service._id === employee.service
     );
     if (!primeValue) return 0;
-    console.log(`bonus: ${primeValue}`);
     return primeValue[primeType] * days;
   };
 
   const renderAgGrid = (role) => {
-    const filteredEmployees = employeePrimes.filter((prime) => {
-      const doctor = data.doctorsByService.find(
-        (doc) => doc.employee.id === prime.employee._id
-      );
-      return doctor && doctor.Type === role;
-    });
+    const filteredEmployees = employeePrimes.filter(
+      (prime) => prime.doctor.Type === role
+    );
+    console.log("filteredEmployees" ,filteredEmployees)
+    console.log("1" ,employeePrimes)
+    console.log("f" ,  filteredEmployees)
+console.log("1" , primeValues);
     const columnDefs = [
       {
-        headerName: "Nom de l'employé",
+        headerName: "Employee Name",
         valueGetter: (params) =>
-          params.data.prime.employee.firstname +
+          params.data.prime.doctor.employee.firstname +
           " " +
-          params.data.prime.employee.lastname,
+          params.data.prime.doctor.employee.lastname,
         width: 200,
         editable: false,
       },
@@ -259,10 +256,10 @@ console.log(employeeGuard);
         headerName: "Prime",
         children: [
           {
-            headerName: "Jours réguliers",
+            headerName: "Regular Days",
             children: [
               {
-                headerName: "N° de jours",
+                headerName: "Number of Days",
                 field: `prime.nbOfDays${role
                   .charAt(0)
                   .toUpperCase()}${role.slice(1)}WorkingOnRegularDays`,
@@ -270,7 +267,7 @@ console.log(employeeGuard);
                 editable: false,
               },
               {
-                headerName: "Unité",
+                headerName: "Unit",
                 field: `primeValue.${role}WorkingOnRegularDaysBonus`,
                 flex: 1,
                 editable: false,
@@ -284,10 +281,10 @@ console.log(employeeGuard);
             ],
           },
           {
-            headerName: "Week-ends",
+            headerName: "Weekends",
             children: [
               {
-                headerName: "N° de jours",
+                headerName: "Number of Days",
                 field: `prime.nbOfDays${role
                   .charAt(0)
                   .toUpperCase()}${role.slice(1)}WorkingOnWeekend`,
@@ -295,7 +292,7 @@ console.log(employeeGuard);
                 editable: false,
               },
               {
-                headerName: "Unité",
+                headerName: "Unit",
                 field: `primeValue.${role}WorkingOnWeekendBonus`,
                 flex: 1,
                 editable: false,
@@ -309,10 +306,10 @@ console.log(employeeGuard);
             ],
           },
           {
-            headerName: "Jours fériés",
+            headerName: "Holidays",
             children: [
               {
-                headerName: "N° de jours",
+                headerName: "Number of Days",
                 field: `prime.nbOfDays${role
                   .charAt(0)
                   .toUpperCase()}${role.slice(1)}WorkingOnHolidays`,
@@ -320,7 +317,7 @@ console.log(employeeGuard);
                 editable: false,
               },
               {
-                headerName: "Unité",
+                headerName: "Unit",
                 field: `primeValue.${role}WorkingOnHolidaysBonus`,
                 flex: 1,
                 editable: false,
@@ -342,48 +339,29 @@ console.log(employeeGuard);
         ],
       },
     ];
-    const rowData = filteredEmployees.map((prime) => {
-      const holidayBonus = calculateBonus(
-        prime.employee,
+
+    const rowData = filteredEmployees.map((prime) => ({
+      prime,
+      holidayBonus: calculateBonus(
+        prime.doctor,
         `${role}WorkingOnHolidaysBonus`,
-        prime[
-          `nbOfDays${role.charAt(0).toUpperCase()}${role.slice(
-            1
-          )}WorkingOnHolidays`
-        ]
-      );
-      const weekendBonus = calculateBonus(
-        prime.employee,
+        prime[`nbOfDays${role.charAt(0).toUpperCase()}${role.slice(1)}WorkingOnHolidays`]
+      ),
+      weekendBonus: calculateBonus(
+        prime.doctor,
         `${role}WorkingOnWeekendBonus`,
-        prime[
-          `nbOfDays${role.charAt(0).toUpperCase()}${role.slice(
-            1
-          )}WorkingOnWeekend`
-        ]
-      );
-      const regularBonus = calculateBonus(
-        prime.employee,
+        prime[`nbOfDays${role.charAt(0).toUpperCase()}${role.slice(1)}WorkingOnWeekend`]
+      ),
+      regularBonus: calculateBonus(
+        prime.doctor,
         `${role}WorkingOnRegularDaysBonus`,
-        prime[
-          `nbOfDays${role.charAt(0).toUpperCase()}${role.slice(
-            1
-          )}WorkingOnRegularDays`
-        ]
-      );
-      const primeValue = primeValues.find(
-        (primeValue) => primeValue.service._id === prime.employee.service
-      );
-      console.log("prime values: ");
-      console.log(JSON.stringify(prime, null, 2));
-      return {
-        prime,
-        holidayBonus,
-        weekendBonus,
-        regularBonus,
-        primeValue,
-        bonusTotal: prime.bonusTotal,
-      };
-    });
+        prime[`nbOfDays${role.charAt(0).toUpperCase()}${role.slice(1)}WorkingOnRegularDays`]
+      ),
+      primeValue: primeValues.find(
+        (primeValue) => primeValue.service._id === prime.doctor.employee.service
+      ),
+      bonusTotal: prime.bonusTotal,
+    }));
 
     return (
       <div
@@ -394,6 +372,7 @@ console.log(employeeGuard);
       </div>
     );
   };
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;

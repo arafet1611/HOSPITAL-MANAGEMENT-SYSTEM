@@ -25,11 +25,18 @@ const Sidebar = () => {
     const storedUserInfo = localStorage.getItem("userInfo");
     if (storedUserInfo) {
       const parsedUserInfo = JSON.parse(storedUserInfo);
-      setRole(parsedUserInfo.job);
+      console.log("Parsed User Info:", parsedUserInfo); // Log parsed user info
 
+      if(parsedUserInfo.isAdmin ){
+        setRole("admin");
+
+      }else { 
+        console.log("job" , parsedUserInfo.job);
+      setRole(parsedUserInfo.job);
+      }
     }
   },[]) 
-
+console.log("role" , role);
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {

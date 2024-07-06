@@ -11,13 +11,13 @@ function CapacityOverview() {
           <div className="row">
             <p className="col-10  text-centeroffset-2 col-lg-9 offset-lg-3 text-start pb-3 text-muted px-2">
               Conformément à l’arrêté ministériel du 02 Janvier 2020, l’hôpital <br />
-              universitaire Charles Nicolle de Tunis possède une capacité de 1047 <br />
+              universitaire Taher Sfar de Tunis possède une capacité de 494 <br />
               lits et 30 berceaux répartis comme suit :
             </p>
             <ul className="col-10  offset-2 col-lg-9 offset-lg-3 text-start pb-3 text-muted px-2">
-              <li>549 lits pour les spécialités chirurgicales dont 15 lits de soins intensifs</li>
-              <li>498 lits pour les spécialités médicales</li>
-              <li>30 berceaux pour la néonatologie</li>
+              <li> 120 lits pour les spécialités chirurgicales dont 15 lits de soins intensifs</li>
+              <li> 200 lits pour les spécialités médicales</li>
+              <li>80  berceaux pour la néonatologie</li>
             </ul>
           </div>
         </div>

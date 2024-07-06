@@ -97,7 +97,7 @@ function App() {
               }
             />
             <Route
-              path="/employee/dashboard"
+              path="/doctor/dashboard"
               element={
                 <PrivateRoute allowedRoles={["doctor"]}>
                   <Dashboard />
@@ -145,7 +145,7 @@ function App() {
               }
             />
             <Route
-              path="/secretary/table-entry"
+              path="/secretary/table-entry/:serviceName"
               element={
                 <PrivateRoute allowedRoles={["secretary"]}>
                   <TableEntry />
@@ -161,7 +161,7 @@ function App() {
               }
             />
             <Route
-              path="/secretary/table-modify"
+              path="/secretary/table-modify/:serviceName"
               element={
                 <PrivateRoute allowedRoles={["secretary"]}>
                   <TableModify />
@@ -177,7 +177,7 @@ function App() {
               }
             />
             <Route
-              path="/hr/vacation-management"
+              path="/admin/vacation-management"
               element={
                 <PrivateRoute allowedRoles={["hr"]}>
                   <VacationManagement />

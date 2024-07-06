@@ -3,6 +3,8 @@ import { AgGridReact } from "ag-grid-react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import { toast, Toaster } from "react-hot-toast";
+import { parse, format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -28,7 +30,7 @@ const EmployeeGaurdTable = () => {
   const onMonthSubmit = async (event) => {
     event.preventDefault();
     if (employeeId && workingMonth) {
-      console.log('onMonthSubmit' , formatMonthYear(workingMonth));
+      console.log('onMonthSubmit', formatMonthYear(workingMonth));
 
       try {
         const response = await axios.get(
@@ -42,6 +44,7 @@ const EmployeeGaurdTable = () => {
       }
     }
   };
+
   const columns = useMemo(
     () => [
       {
@@ -51,9 +54,14 @@ const EmployeeGaurdTable = () => {
         flex: 2,
         maxWidth: 60,
       },
-    { headerName: "Date de garde", field: "date", flex: 1 , sortable: true,
-      filter: true,
-      sort: "asc",  },
+      {
+        headerName: "Date de garde",
+        field: "date",
+        flex: 1,
+        sortable: true,
+        filter: true,
+        sort: "asc",
+      },
       { headerName: "Jour de garde", field: "day", flex: 1 },
       { headerName: "Heure de début", field: "startHour", flex: 1 },
       { headerName: "Heure de fin", field: "endHour", flex: 1 },
@@ -62,19 +70,27 @@ const EmployeeGaurdTable = () => {
   );
 
   const rowData = useMemo(
-    () => guardingDates.map((date) => ({
-      date,
-      day: new Intl.DateTimeFormat('fr-FR', { weekday: 'long' }).format(new Date(date)),
-      startHour : "12:00",
-      endHour : "12:00"
-    })),
+    () =>
+      guardingDates
+        .map((dateStr) => {
+          const parsedDate = parse(dateStr, 'dd/MM/yyyy', new Date());
+          if (isNaN(parsedDate)) {
+            console.error(`Invalid date encountered: ${dateStr}`);
+            return null;
+          }
+          return {
+            date: dateStr,
+            day: format(parsedDate, 'EEEE', { locale: fr }),
+            startHour: "12:00",
+            endHour: "12:00",
+          };
+        })
+        .filter((row) => row !== null),
     [guardingDates]
   );
 
   const formatMonthYear = (date) => {
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-    return `${month}/${year}`;
+    return format(date, 'MM/yyyy');
   };
 
   return (
@@ -110,23 +126,19 @@ const EmployeeGaurdTable = () => {
       </div>
 
       {isMonthSubmitted && (
-        <>     <div className="text-center pt-5">
-        <h2 className="text-center">
-        Liste des dates où vous êtes de garde en {" "}
-<strong className="text-primary">{formatMonthYear(workingMonth)}</strong>.
-</h2>
-    
-   </div>
-        <div className="container my-5 p-3 bg-white shadow ag-theme-alpine" style={{ height: 400, width: "100%" }}>
-          <AgGridReact
-            columnDefs={columns}
-            rowData={rowData}
-        
-          />
-        </div>
-        </>)}
+        <>
+          <div className="text-center pt-5">
+            <h2 className="text-center">
+              Liste des dates où vous êtes de garde en{" "}
+              <strong className="text-primary">{formatMonthYear(workingMonth)}</strong>.
+            </h2>
+          </div>
+          <div className="container my-5 p-3 bg-white shadow ag-theme-alpine" style={{ height: 400, width: "100%" }}>
+            <AgGridReact columnDefs={columns} rowData={rowData} />
+          </div>
+        </>
+      )}
     </div>
-   
   );
 };
 

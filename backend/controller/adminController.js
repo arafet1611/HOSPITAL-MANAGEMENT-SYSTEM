@@ -4,21 +4,20 @@ import Admin from "../model/adminModel.js";
 
 const authAdmin = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    console.log("Received password:", password);
+    const { email, userPassword } = req.body;
+    console.log("Received password:", userPassword);
     const admin = await Admin.findOne({ email });
     console.log("Admin:", admin);
     if (admin) {
       console.log("Admin password hash:", admin.password);
 
-      const verified = bcrypt.compareSync(password, admin.password);
+      const verified = bcrypt.compareSync(userPassword, admin.password);
       console.log("Password verified:", verified);
       if (verified) {
         res.status(201).json({
           _id: admin._id,
           email: admin.email,
-          job: admin.isAdmin,
-          admin: "",
+          isAdmin: admin.isAdmin,
           token: generateToken(admin._id),
         });
       } else {

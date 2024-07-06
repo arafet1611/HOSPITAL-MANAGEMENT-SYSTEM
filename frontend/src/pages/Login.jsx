@@ -21,7 +21,7 @@ function Login() {
       const response = await axios.post(endpoint, { email, userPassword: password });
       localStorage.setItem('userInfo', JSON.stringify(response.data));
       toast.success("Login successful");
-      window.location.replace("/");
+      window.location.replace(`/${response.data.job}/dashboard`);
 
     } catch (error) {
       toast.error(error.message);

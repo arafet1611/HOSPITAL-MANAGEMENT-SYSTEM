@@ -223,7 +223,7 @@ const [acceptedPermutationRequests ,setAcceptedPermutationRequests] = useState([
 </h2>
         
        </div>
-          <div className="container my-5 p-3 bg-white shadow card text-center">
+          {/* <div className="container my-5 p-3 bg-white shadow card text-center">
             <div className="card-header text-bg-primary fw-bold">
               Demandes de Congé à appliquer
             </div>
@@ -270,7 +270,7 @@ const [acceptedPermutationRequests ,setAcceptedPermutationRequests] = useState([
               </table>
              
             </div>
-          </div>
+          </div> */}
           <div className="container my-5 p-3 bg-white shadow card text-center">
             <div className="card-header text-bg-primary fw-bold">
               Demandes de permutation à appliquer

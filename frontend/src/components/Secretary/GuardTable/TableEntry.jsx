@@ -5,6 +5,7 @@ import "semantic-ui-css/semantic.min.css";
 import { AgGridReact } from "ag-grid-react";
 import { useNavigate, useLocation , useParams} from "react-router-dom";
 import axios from "axios";
+import { toast, Toaster } from "react-hot-toast";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
@@ -225,7 +226,8 @@ const TableEntry = (props) => {
         "http://localhost:5000/api/guardboard/board/",
         requestData
       );
-  
+  toast.success("table Tableau rempli avec succès");
+  navigate("/secretary/table-view");
       console.log("Data posted successfully:", response.data);
     } catch (error) {
       console.error("Error posting data:", error);

@@ -2,12 +2,10 @@ import  { useState } from 'react';
 
 const CollapsibleText = () => {
   const fakeData = [
-    { title: 'SERVICE DES LABORATOIRES', content: 'Content for Accordion 1' },
-    { title: 'SPÉCIALITÉS MÉDICALES', content: 'Content for Accordion 2' },
-    { title: 'SPÉCIALITÉS CHIRURGICALES', content: 'Content for Accordion 3' },
-    { title: 'SERVICE DES URGENCES', content: 'Content for Accordion 4' },
-    { title: 'SERVICE DE CARDIOLOGIE', content: 'Content for Accordion 5' },
-    { title: 'SERVICE D\'IMAGERIE MÉDICALE', content: 'Content for Accordion 6' },
+    { title: 'SERVICE hospitalier', content: 'a propos ..' },
+    { title: 'SERVICE non hospitalier', content: 'a propos ..' },
+    { title: 'PLATEAU technique ', content: 'a propos ..' },
+   
   ];
 
   const [collapsedItems, setCollapsedItems] = useState(Array(fakeData.length).fill(true));

@@ -3,6 +3,8 @@ import "../../HR/EmployeeManagement/EmployeeModelPopup.css";
 import { useFormik } from 'formik'
 import { useDispatch } from 'react-redux';
 import { setNavbarSticky } from '../../../redux/navbar/NavbarSlice';
+import { toast, Toaster } from "react-hot-toast";
+
 const ModelPopup = ({ setShowModal }) => {
   const [loading, setLoading] = useState(false)
   const modalContainerRef = useRef(null);
@@ -34,6 +36,7 @@ const ModelPopup = ({ setShowModal }) => {
     },
     onSubmit: values => {
       createEmployee(values)
+      toast.success("Vacances ajoutées avec succès");
       handleDropdownClose()
     },
   })
@@ -57,6 +60,8 @@ const ModelPopup = ({ setShowModal }) => {
   }, [setShowModal]);
 
   return (
+    <>
+    <Toaster />
     <div className="modalContainer" >
 <form action="" onSubmit={formik.handleSubmit}>
       <div className="modalBox" ref={modalContainerRef}>
@@ -100,6 +105,7 @@ const ModelPopup = ({ setShowModal }) => {
       </div>
       </form>
     </div>
+    </>
   );
 };
 

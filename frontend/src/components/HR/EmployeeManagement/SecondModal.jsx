@@ -67,6 +67,7 @@ function SecondModal({ employeeId, jobPosition,  serviceId}) {
         await createDoctor({
           variables: { employeeID: employeeId, doctorInput: inputData },
         });
+        window.location.replace("/hr/employees-management");
       } else if (jobPosition === "Technician") {
         await createTechnician({
           variables: { employeeID: employeeId, technicianInput: inputData },

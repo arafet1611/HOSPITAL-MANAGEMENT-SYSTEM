@@ -5,6 +5,7 @@ import { toast, Toaster } from "react-hot-toast";
 import "../Styles/Navbar.css";
 import io from "socket.io-client";
 import axios from "axios";
+import img1 from "../assets/img/logo.jpg";
 
 function Navbar() {
   const isNavbarSticky = useSelector((state) => state.navbar.isNavbarSticky);
@@ -28,34 +29,36 @@ function Navbar() {
         userId: parsedUserInfo._id,
         userRole: parsedUserInfo.role,
       });
+     console.log("userInfo", parsedUserInfo);
+      if (!parsedUserInfo.isAdmin) {
+        axios
+          .get(
+            `http://localhost:5000/api/notifications/${parsedUserInfo.service}?job=${parsedUserInfo.job}&userId=${parsedUserInfo._id}`
+          )
+          .then((response) => {
+            console.log(response);
+            const notifications = response.data;
+            setNotifications(notifications);
+            setUnreadCount(notifications.filter((n) => !n.read).length);
+          })
+          .catch((error) => {
+            console.error("Error fetching notifications:", error);
+          });
 
-      axios
-        .get(
-          `http://localhost:5000/api/notifications/${parsedUserInfo.service}?job=${parsedUserInfo.job}&userId=${parsedUserInfo._id}`
-        )
-        .then((response) => {
-          console.log(response);
-          const notifications = response.data;
-          setNotifications(notifications);
-          setUnreadCount(notifications.filter((n) => !n.read).length);
-        })
-        .catch((error) => {
-          console.error("Error fetching notifications:", error);
+        socketRef.current.on("guardingDatesUpdated", (data) => {
+          if (data.role && data.role === parsedUserInfo.role) {
+            toast(
+              `Notification for role ${parsedUserInfo.role}: ${data.message}`
+            );
+            setNotifications((prev) => [data, ...prev]);
+            setUnreadCount((prev) => prev + 1);
+          } else if (!data.role) {
+            toast(`Service-wide notification: ${data.message}`);
+            setNotifications((prev) => [data, ...prev]);
+            setUnreadCount((prev) => prev + 1);
+          }
         });
-
-      socketRef.current.on("guardingDatesUpdated", (data) => {
-        if (data.role && data.role === parsedUserInfo.role) {
-          toast(
-            `Notification for role ${parsedUserInfo.role}: ${data.message}`
-          );
-          setNotifications((prev) => [data, ...prev]);
-          setUnreadCount((prev) => prev + 1);
-        } else if (!data.role) {
-          toast(`Service-wide notification: ${data.message}`);
-          setNotifications((prev) => [data, ...prev]);
-          setUnreadCount((prev) => prev + 1);
-        }
-      });
+      }
     }
 
     return () => {
@@ -78,7 +81,7 @@ function Navbar() {
         }
       };
 
-      if (socketRef.current) {
+      if (socketRef.current && !parsedUserInfo.isAdmin) {
         socketRef.current.on(
           "leaveRequestStatusChange",
           handleLeaveRequestStatusChange
@@ -100,6 +103,8 @@ function Navbar() {
     if (localStorage.getItem("userInfo")) {
       localStorage.removeItem("userInfo");
       toast.success("Logout successful");
+      window.location.replace("/login");
+
       setUserInfo(null);
     }
   };
@@ -120,7 +125,11 @@ function Navbar() {
               exact
               title="Home"
             >
-              ACCUEIL
+              <img
+                className="img-thumbnail rounded float-left shadow"
+                src={img1}
+                style={{ maxWidth: "20%" }}
+              />
             </NavLink>
             <button
               className="navbar-toggler"
@@ -139,17 +148,20 @@ function Navbar() {
                 {/* Dropdown items */}
                 {/* Your existing dropdown items are removed here */}
               </ul>
-  
+
               {/* User info section */}
               <div className="navbar align-self-center d-flex">
                 {!userInfo ? (
                   <NavLink
-                    className="nav-link text-success p-2"
+                    className="nav-link"
                     to="/login"
                     exact
-                    title="Login"
+                    title="login"
                   >
-                    Login
+                    <i
+                      className="bi-person-badge text-primary fs-4 ms-2"
+                      role="img"
+                    ></i><strong className="text-primary">Login</strong>
                   </NavLink>
                 ) : (
                   <>
@@ -159,83 +171,83 @@ function Navbar() {
                         Bonjour, Admin
                       </div>
                     ) : (
-                      <NavLink
-                        className="nav-link text-success"
-                        to="/my-profile"
-                        exact
-                        title="Profile"
-                      >
-                        {userInfo.isAdmin}
-                        Bonjour, {userInfo.sex === "male" ? "M." : "Mme"}{" "}
-                        <strong>
-                          {userInfo.firstname.charAt(0).toUpperCase() +
-                            userInfo.firstname.slice(1)}{" "}
-                          {userInfo.lastname.charAt(0).toUpperCase() +
-                            userInfo.lastname.slice(1)}
-                        </strong>
-                      </NavLink>
-                    )}
-  
-                    {/* Notifications dropdown */}
-                    <div className="nav-item dropdown">
-                      <a
-                        className="nav-link dropdown-toggle notification-icon"
-                        href="#"
-                        id="navbarNotificationsDropdown"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                        onClick={handleNotificationsClick}
-                      >
-                        <i className="bi-bell fs-4 ms-2" role="img"></i>
-                        {unreadCount > 0 && (
-                          <span
-                            className="badge"
-                            style={{
-                              fontSize: "0.75em",
-                              padding: "2px 4px",
-                              marginRight: "4.5px",
-                            }}
+                      <>
+                        <NavLink
+                          className="nav-link text-success"
+                          to="/my-profile"
+                          exact
+                          title="Profile"
+                        >
+                          {userInfo.sex === "male" ? "M." : "Mme"}{" "}
+                          <strong>
+                            {userInfo.firstname.charAt(0).toUpperCase() +
+                              userInfo.firstname.slice(1)}{" "}
+                            {userInfo.lastname.charAt(0).toUpperCase() +
+                              userInfo.lastname.slice(1)}
+                          </strong>
+                        </NavLink>
+                        
+                        {/* Notifications dropdown */}
+                        <div className="nav-item dropdown">
+                          <a
+                            className="nav-link dropdown-toggle notification-icon"
+                            href="#"
+                            id="navbarNotificationsDropdown"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            onClick={handleNotificationsClick}
                           >
-                            <small>{unreadCount}</small>
-                          </span>
-                        )}
-                      </a>
-                      <div
-                        className="dropdown-menu dropdown-menu-end p-3"
-                        aria-labelledby="navbarNotificationsDropdown"
-                      >
-                        <div className="notification-ui_dd-header">
-                          <h3 className="text-center">Notifications</h3>
-                        </div>
-                        <div className="notification-ui_dd-content">
-                          {notifications.length > 0 ? (
-                            notifications.map((notification, index) => (
-                              <div className="notification-list" key={index}>
-                                <div className="notification-list_detail">
-                                  <p>
-                                    <b>{notification.title}</b>{" "}
-                                    {notification.message}
-                                  </p>
-                                  <p>
-                                    <small>{notification.createdAt}</small>
-                                  </p>
-                                </div>
-                              </div>
-                            ))
-                          ) : (
-                            <p>No new notifications</p>
-                          )}
-                        </div>
-                        <div className="notification-ui_dd-footer">
-                          <a href="#!" className="btn btn-primary btn-block">
-                            View All
+                            <i className="bi-bell fs-4 ms-2" role="img"></i>
+                            {unreadCount > 0 && (
+                              <span
+                                className="badge"
+                                style={{
+                                  fontSize: "0.75em",
+                                  padding: "2px 4px",
+                                  marginRight: "4.5px",
+                                }}
+                              >
+                                <small>{unreadCount}</small>
+                              </span>
+                            )}
                           </a>
+                          <div
+                            className="dropdown-menu dropdown-menu-end p-3"
+                            aria-labelledby="navbarNotificationsDropdown"
+                          >
+                            <div className="notification-ui_dd-header">
+                              <h3 className="text-center">Notifications</h3>
+                            </div>
+                            <div className="notification-ui_dd-content">
+                              {notifications.length > 0 ? (
+                                notifications.map((notification, index) => (
+                                  <div className="notification-list" key={index}>
+                                    <div className="notification-list_detail">
+                                      <p>
+                                        <b>{notification.title}</b>{" "}
+                                        {notification.message}
+                                      </p>
+                                      <p>
+                                        <small>{notification.createdAt}</small>
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))
+                              ) : (
+                                <p>No new notifications</p>
+                              )}
+                            </div>
+                            <div className="notification-ui_dd-footer">
+                              <a href="#!" className="btn btn-primary btn-block">
+                                View All
+                              </a>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-  
+                      </>
+                    )}
                     {/* Logout link */}
                     <NavLink
                       className="nav-link"
@@ -255,5 +267,7 @@ function Navbar() {
         </nav>
       </div>
     </>
-  );}
+  );
+}
+
 export default Navbar;
